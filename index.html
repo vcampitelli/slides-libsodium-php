@@ -8,7 +8,7 @@
         <title>libsodium no PHP 7.2</title>
 
         <link rel="stylesheet" href="revealjs/css/reveal.css">
-        <link rel="stylesheet" href="revealjs/css/theme/beige.css">
+        <link rel="stylesheet" href="revealjs/css/theme/league.css">
 
         <link rel="stylesheet" href="css/prism.css">
         <link rel="stylesheet" href="css/app.css">
@@ -55,6 +55,8 @@
                     <section>
                         <h2>Tipos de criptografia</h2>
                     </section>
+                </section>
+                <section>
                     <section>
                         <h3>Simétrica</h3>
                         <ul>
@@ -62,21 +64,67 @@
                         </ul>
                     </section>
                     <section>
-                        <h4>Problema: Troca de chaves</h4>
-                        <div class="fragment">
-                            <p>Algoritmo Diffie–Hellman</p>
-                        </div>
+                        <pre><code class="language-php">public function encrypt($data) {
+    $iv = openssl_random_pseudo_bytes(
+        openssl_cipher_iv_length('aes-256-ctr')
+    );
+
+    return base64_encode(
+        $iv . openssl_encrypt(
+            $data, 'aes-256-ctr', '@rw97`b#1,EquJ[L2P2',
+            OPENSSL_RAW_DATA, $iv
+        )
+    );
+}
+</code></pre>
                     </section>
                     <section>
-                        <img src="img/Diffie-Hellman_Key_Exchange.png" alt="Exemplificação do algoritmo Diffie-Hellman para troca de chaves">
-                        <p class="small">Fonte: <a href="https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange">Wikipedia</a></p>
+                        <pre><code class="language-php">public function decrypt($data) {
+    $data = base64_decode($data);
+    $ivSize = openssl_cipher_iv_length('aes-256-ctr');
+    $iv = substr($data, 0, $ivSize);
+    $data = substr($data, $ivSize);
+
+    return openssl_decrypt(
+        $data, 'aes-256-ctr', '@rw97`b#1,EquJ[L2P2',
+        OPENSSL_RAW_DATA, $iv
+    );
+}
+</code></pre>
                     </section>
+                </section>
+                <section>
                     <section>
                         <h3>Assimétrica</h3>
                         <ul>
                             <li>Chave pública: utilizada para criptografar (escrever)</li>
                             <li>Chave privada: utilizada para descriptografar (ler)</li>
                         </ul>
+                    </section>
+                    <section>
+                        <pre><code class="language-php">public function encrypt($data, $publicKey) {
+    $public = openssl_get_publickey($publicKey);
+    openssl_public_encrypt($data, $crypted, $public);
+    return $crypted;
+}
+</code></pre>
+                    </section>
+                    <section>
+                        <pre><code class="language-php">public function decrypt($data, $privateKey, $passphrase) {
+    $key = openssl_pkey_get_private($privateKey, $passphrase);
+    openssl_private_decrypt($data, $decrypted, $key);
+    return $decrypted;
+}
+</code></pre>
+                    </section>
+                    <section>
+                        <p>Tenho certeza que ao invés de omitir o parâmetro <code class="language-php">$padding</code> nos códigos acima, todos usam <code class="language-php">OPENSSL_PKCS1_OAEP_PADDING</code>, certo?</p>
+                    </section>
+                    <section>
+                        <p>Afinal, é claro que o parâmetro <em>default</em> (<code class="language-php">OPENSSL_PKCS1_PADDING</code>) utiliza o padrão PKCS#1 v1.5, que é vulnerável a <em>Padding attacks</em>.</p>
+                    </section>
+                    <section>
+                        <p>E todos sabemos que o algoritmo RSA com uma chave de 2048 bits só consegue processar dados de até 214 bytes.</p>
                     </section>
                 </section>
                 <section>
@@ -85,11 +133,9 @@
                         <blockquote>é uma função que mapeia dados de tamanho arbitrário para dados de tamanho fixo</blockquote>
                     </section>
                     <section>
-                        <h2>Assinaturas</h2>
+                        <h2>Assinatura</h2>
                         <blockquote>esquema matemático para demonstrar a autenticidade de uma mensagem</blockquote>
                     </section>
-                </section>
-                <section>
                     <section>
                         <h3>Mas eu já sei usar hash!</h3>
                         <pre><code class="language-php">if (hash('sha512', $_POST['password']) !== $senhaDoBanco) {
@@ -98,7 +144,8 @@
 </code></pre>
                     </section>
                     <section>
-                        <h3>E você sabe o que é timing attack?</h3>
+                        <h3>E você sabe o que é Timing Attack?</h3>
+                        <div class="fragment"><blockquote>ataque que explora operações que não possuem tempo constante</blockquote></div>
                     </section>
                 </section>
                 <section>
@@ -149,6 +196,7 @@ $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
                         <pre><code class="language-php">// Lê a chave
 $key = trim(file_get_contents('03-auth.key'));
 
+// Gera a assinatura para o $ciphertext
 $auth = sodium_bin2hex(sodium_crypto_auth($ciphertext, $key));
 </code></pre>
                     </section>
@@ -168,14 +216,14 @@ return sodium_crypto_auth_verify($auth, $ciphertext, $key);
                     <section>
                         <h4>Crypto Box</h4>
                         <pre><code class="language-php">// Servidor 1 - Alice
-$alice = sodium_crypto_box_keypair();
-$alicePublic = sodium_crypto_box_publickey($alice);
-$aliceSecret = sodium_crypto_box_secretkey($alice);
+$aliceKeyPair = sodium_crypto_box_keypair();
+$alicePublic = sodium_crypto_box_publickey($aliceKeyPair);
+$aliceSecret = sodium_crypto_box_secretkey($aliceKeyPair);
 
 // Servidor 2 - Bob
-$bob = sodium_crypto_box_keypair();
-$bobPublic = sodium_crypto_box_publickey($bob);
-$bobSecret = sodium_crypto_box_secretkey($bob);
+$bobKeyPair = sodium_crypto_box_keypair();
+$bobPublic = sodium_crypto_box_publickey($bobKeyPair);
+$bobSecret = sodium_crypto_box_secretkey($bobKeyPair);
 </code></pre>
                     </section>
                     <section>

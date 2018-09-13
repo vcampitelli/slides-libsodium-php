@@ -23,6 +23,7 @@ pre[class*="language-"] {
   box-shadow: none;
 }
 code[class*="language-"] {
+  border: 0 !important;
   text-shadow: none;
 }
 div.block {
