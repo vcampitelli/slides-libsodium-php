@@ -118,23 +118,19 @@
 </code></pre>
                     </section>
                     <section>
-                        <p>Tenho certeza que ao invés de omitir o parâmetro <code class="language-php">$padding</code> nos códigos acima, todos usam <code class="language-php">OPENSSL_PKCS1_OAEP_PADDING</code>, certo?</p>
+                        <p>Tenho certeza que ao invés de omitir o parâmetro <code class="language-php">$padding</code> nos códigos anteriores, todos usam <code class="language-php">OPENSSL_PKCS1_OAEP_PADDING</code>, certo?</p>
                     </section>
                     <section>
                         <p>Afinal, é claro que o parâmetro <em>default</em> (<code class="language-php">OPENSSL_PKCS1_PADDING</code>) utiliza o padrão PKCS#1 v1.5, que é vulnerável a <em>Padding attacks</em>.</p>
                     </section>
                     <section>
-                        <p>E todos sabemos que o algoritmo RSA com uma chave de 2048 bits só consegue processar dados de até 214 bytes.</p>
+                        <p>E sabemos que o algoritmo RSA com uma chave de 2048 bits só consegue processar dados de até 214 bytes.</p>
                     </section>
                 </section>
                 <section>
                     <section>
                         <h2>Hashing</h2>
                         <blockquote>é uma função que mapeia dados de tamanho arbitrário para dados de tamanho fixo</blockquote>
-                    </section>
-                    <section>
-                        <h2>Assinatura</h2>
-                        <blockquote>esquema matemático para demonstrar a autenticidade de uma mensagem</blockquote>
                     </section>
                     <section>
                         <h3>Mas eu já sei usar hash!</h3>
@@ -191,6 +187,10 @@ $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
                     </section>
                 </section>
                 <section>
+                    <section>
+                        <h4>Assinatura</h4>
+                        <blockquote>esquema matemático para demonstrar a autenticidade de uma mensagem</blockquote>
+                    </section>
                     <section>
                         <h4>Assinatura</h4>
                         <pre><code class="language-php">// Lê a chave
