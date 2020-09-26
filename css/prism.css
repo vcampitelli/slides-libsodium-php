@@ -1,4 +1,4 @@
-/* PrismJS 1.14.0
+/* PrismJS 1.21.0
 https://prismjs.com/download.html#themes=prism-twilight&languages=markup+clike+markup-templating+php+php-extras */
 /**
  * prism.js Twilight theme
@@ -10,6 +10,7 @@ pre[class*="language-"] {
 	color: white;
 	background: none;
 	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
 	text-align: left;
 	text-shadow: 0 -.1em .2em black;
 	white-space: pre;
@@ -86,7 +87,7 @@ code[class*="language-"]::selection, code[class*="language-"] ::selection {
 	opacity: .7;
 }
 
-.namespace {
+.token.namespace {
 	opacity: .7;
 }
 
