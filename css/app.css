@@ -50,7 +50,7 @@ div.one-third {
 .reveal .slides section .fragment.highlight-green.visible {
   color: #e7ad52;
 }
-p.small {
+.small {
   font-size: 0.5em;
 }
 .text-white {

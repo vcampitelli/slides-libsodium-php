@@ -21,20 +21,23 @@
                     <h1 id="title">libsodium no PHP 7</h1>
                 </section>
                 <section>
-                    <h2>Quem sou eu?</h2>
+                    <h2>Sobre</h2>
                     <ul>
-                        <li>Vinícius Campitelli &bull; <a href="http://vcampitelli.github.io">vcampitelli.github.io</a></li>
+                        <li>PHPSP</li>
+                        <li>Slides no GitHub: <a href="https://vcampitelli.github.io">vcampitelli</a></li>
+                        <li>Twitter: <a href="https://twitter.com/vcampitelli">vcampitelli</a></li>
                     </ul>
                 </section>
                 <section>
-                    <section>
+                    <section data-auto-animate>
                         <h2>O que é criptografia?</h2>
+                        <div>
+                            <blockquote class="fragment">é a prática e o estudo de técnicas para comunicação segura na presença de terceiros</blockquote>
+                            <blockquote class="fragment">é a construção e análise de protocolos que previnam terceiros de ler mensagens privadas</blockquote>
+                        </div>
                     </section>
-                    <section>
-                        <blockquote>é a prática e o estudo de técnicas para comunicação segura na presença de terceiros</blockquote>
-                        <blockquote>é a construção e análise de protocolos que previnam terceiros de ler mensagens privadas</blockquote>
-                    </section>
-                    <section>
+                    <section data-auto-animate>
+                        <h2>O que é criptografia?</h2>
                         <div class="row">
                             <div class="block one-third">Texto claro</div>
                             <div id="flow-cipher" class="one-third">&rarr;</div>
@@ -43,88 +46,106 @@
                     </section>
                 </section>
                 <section>
-                    <section>
-                        <h2>Tipos de criptografia</h2>
+                    <section data-auto-animate>
+                        <h3>Criptografia Simétrica</h3>
+                        <div>
+                            Utiliza uma mesma chave para criptografar e descriptografar os textos
+                        </div>
                     </section>
-                </section>
-                <section>
-                    <section>
-                        <h3>Simétrica</h3>
-                        <ul>
-                            <li>Utiliza uma mesma chave para criptografar e descriptografar os textos</li>
-                        </ul>
-                    </section>
-                    <section>
-                        <pre><code class="language-php">public function encrypt($data) {
+                    <section data-auto-animate>
+                        <h3>Criptografia Simétrica</h3>
+                        <div>
+                            <pre><code class="language-php">public function encrypt($data) {
     $iv = openssl_random_pseudo_bytes(
         openssl_cipher_iv_length('aes-256-ctr')
     );
-
     return base64_encode(
         $iv . openssl_encrypt(
-            $data, 'aes-256-ctr', '@rw97`b#1,EquJ[L2P2',
-            OPENSSL_RAW_DATA, $iv
+            $data,
+            'aes-256-ctr',         // cifra
+            '@rw97`b#1,EquJ[L2P2', // chave
+            OPENSSL_RAW_DATA,      // flags
+            $iv                    // iv / nonce
         )
     );
 }
 </code></pre>
+                            <p class="small">Exemplo de criptografia simétrica utilizando OpenSSL</p>
+                        </div>
                     </section>
-                    <section>
-                        <pre><code class="language-php">public function decrypt($data) {
+                    <section data-auto-animate>
+                        <h3>Criptografia Simétrica</h3>
+                        <div>
+                            <pre><code class="language-php">public function decrypt($data) {
     $data = base64_decode($data);
     $ivSize = openssl_cipher_iv_length('aes-256-ctr');
     $iv = substr($data, 0, $ivSize);
     $data = substr($data, $ivSize);
 
     return openssl_decrypt(
-        $data, 'aes-256-ctr', '@rw97`b#1,EquJ[L2P2',
-        OPENSSL_RAW_DATA, $iv
+        $data,
+        'aes-256-ctr',          // cifra
+        '@rw97`b#1,EquJ[L2P2',  // chave
+        OPENSSL_RAW_DATA,       // flags
+        $iv                     // iv / nonce
     );
 }
 </code></pre>
+                            <p class="small">Exemplo de criptografia simétrica utilizando OpenSSL</p>
+                        </div>
                     </section>
                 </section>
                 <section>
-                    <section>
-                        <h3>Assimétrica</h3>
-                        <ul>
-                            <li>Chave pública: utilizada para criptografar (escrever)</li>
-                            <li>Chave privada: utilizada para descriptografar (ler)</li>
-                        </ul>
+                    <section data-auto-animate>
+                        <h3>Criptografia Assimétrica</h3>
+                        <div>
+                            <ul>
+                                <li>Chave pública: utilizada para criptografar (escrever)</li>
+                                <li>Chave privada: utilizada para descriptografar (ler)</li>
+                            </ul>
+                        </div>
                     </section>
-                    <section>
-                        <pre><code class="language-php">public function encrypt($data, $publicKey) {
-    $public = openssl_get_publickey($publicKey);
+                    <section data-auto-animate>
+                        <h3>Criptografia Assimétrica</h3>
+                        <div>
+                            <pre><code class="language-php">public function encrypt($data, $publicKeyPath) {
+    $public = openssl_pkey_get_public("file://{$publicKeyPath}");
     openssl_public_encrypt($data, $crypted, $public);
     return $crypted;
 }
 </code></pre>
+                            <p class="small">Exemplo de criptografia assimétrica utilizando OpenSSL</p>
+                        </div>
                     </section>
-                    <section>
-                        <pre><code class="language-php">public function decrypt($data, $privateKey, $passphrase) {
-    $key = openssl_pkey_get_private($privateKey, $passphrase);
+                    <section data-auto-animate>
+                        <h3>Criptografia Assimétrica</h3>
+                        <div>
+                            <pre><code class="language-php">public function decrypt($data, $privateKeyPath, $passphrase) {
+    $key = openssl_pkey_get_private("file://{$privateKeyPath}", $passphrase);
     openssl_private_decrypt($data, $decrypted, $key);
     return $decrypted;
 }
 </code></pre>
+                            <p class="small">Exemplo de criptografia assimétrica utilizando OpenSSL</p>
+                        </div>
                     </section>
-                    <section data-auto-animate>
+                    <section>
                         <div>
                             <p>Tenho certeza que ao invés de omitir o parâmetro <code class="language-php">$padding</code> nos códigos anteriores, todos usam <code class="language-php">OPENSSL_PKCS1_OAEP_PADDING</code>, certo?</p>
                         </div>
                     </section>
-                    <section data-auto-animate>
+                    <section>
                         <div>
                             <p>Afinal, é claro que o parâmetro <em>default</em> (<code class="language-php">OPENSSL_PKCS1_PADDING</code>) utiliza o padrão PKCS#1 v1.5, que é vulnerável a <em>Padding attacks</em>.</p>
                         </div>
                     </section>
-                    <section data-auto-animate>
+                    <section>
                         <div>
                             <p>E sabemos que o algoritmo RSA com uma chave de 2048 bits só consegue processar dados de até 214 bytes.</p>
                         </div>
                     </section>
 
-                    <section data-auto-animate data-background-color="#6e6968">
+                    <section>
                         <div>
                             <h3 class="text-white">Não é mesmo?</h3>
                             <img src="https://media1.giphy.com/media/1LmBFphV4XNSw/giphy.gif">
@@ -155,13 +176,13 @@
                             <li>Biblioteca incorporada no PHP 7.2</li>
                             <li>Site oficial: <a href="http://libsodium.org/">libsodium.org</a></li>
                             <li>Biblioteca PHP: <a href="https://paragonie.com/book/pecl-libsodium">pecl libsodium</a></li>
-                            <li>GitHub da biblioteca PHP:<a href="https://github.com/jedisct1/libsodium-php">libsodium-php</a></li>
+                            <li>GitHub da biblioteca PHP: <a href="https://github.com/jedisct1/libsodium-php">libsodium-php</a></li>
                         </ul>
                     </section>
                 </section>
                 <section>
                     <section>
-                        <h4>Encrypt</h4>
+                        <h4>Criptografia Simétrica</h4>
                         <pre><code class="language-php">// Lê a chave
 $key = trim(file_get_contents('02-encrypt.key'));
 
@@ -172,10 +193,11 @@ $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 $ciphertext = sodium_bin2hex(
     $nonce . sodium_crypto_secretbox($plaintext, $nonce, $key)
 );
-// 7641ab3d68fedf4c52cc026aa1dcf611575a5843058483d281efa95b1577eddc6cb4ee37f5a8d8413e7ba6cd50</code></pre>
+</code></pre>
+                        <a href="scripts/02-encrypt.php" class="small">scripts/02-encrypt.php</a>
                     </section>
                     <section>
-                        <h4>Decrypt</h4>
+                        <h4>Criptografia Simétrica</h4>
                         <pre><code class="language-php">$ciphertext = sodium_hex2bin($ciphertext);
 
 // Lê a chave
@@ -188,13 +210,10 @@ $ciphertext = substr($ciphertext, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 // Descriptografa
 $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
 </code></pre>
+                        <a href="scripts/02-decrypt.php" class="small">scripts/02-decrypt.php</a>
                     </section>
                 </section>
                 <section>
-                    <section>
-                        <h4>Assinatura</h4>
-                        <blockquote>esquema matemático para demonstrar a autenticidade de uma mensagem</blockquote>
-                    </section>
                     <section>
                         <h4>Assinatura</h4>
                         <pre><code class="language-php">// Lê a chave
@@ -203,6 +222,7 @@ $key = trim(file_get_contents('03-auth.key'));
 // Gera a assinatura para o $ciphertext
 $auth = sodium_bin2hex(sodium_crypto_auth($ciphertext, $key));
 </code></pre>
+                        <a href="scripts/03-auth.php" class="small">scripts/03-auth.php</a>
                     </section>
                     <section>
                         <h4>Assinatura - Validando</h4>
@@ -214,44 +234,52 @@ $key = trim(file_get_contents('03-auth.key'));
 // Verifica a assinatura
 return sodium_crypto_auth_verify($auth, $ciphertext, $key);
 </code></pre>
+                        <a href="scripts/03-checkauth.php" class="small">scripts/03-checkauth.php</a>
                     </section>
                 </section>
                 <section>
-                    <section>
-                        <h4>Crypto Box</h4>
-                        <pre><code class="language-php">// Servidor 1 - Alice
+                    <section data-auto-animate>
+                        <h4>Criptografia Assimétrica</h4>
+                        <pre><code class="language-php">// Cliente 1 - Alice
 $aliceKeyPair = sodium_crypto_box_keypair();
 $alicePublic = sodium_crypto_box_publickey($aliceKeyPair);
 $aliceSecret = sodium_crypto_box_secretkey($aliceKeyPair);
 
-// Servidor 2 - Bob
+// Cliente 2 - Bob
 $bobKeyPair = sodium_crypto_box_keypair();
 $bobPublic = sodium_crypto_box_publickey($bobKeyPair);
 $bobSecret = sodium_crypto_box_secretkey($bobKeyPair);
 </code></pre>
+                        <a href="scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
                     </section>
-                    <section>
-                        <h4>Crypto Box - Alice</h4>
-                        <pre><code class="language-php">$nonce = random_bytes(SODIUM_CRYPTO_BOX_NONCEBYTES);
+                    <section data-auto-animate>
+                        <h4>Criptografia Assimétrica</h4>
+                        <pre><code class="language-php">// Cliente 1 - Alice
+$nonce = random_bytes(SODIUM_CRYPTO_BOX_NONCEBYTES);
 
 $key = sodium_crypto_box_keypair_from_secretkey_and_publickey(
-    $aliceSecret, $bobPublic
+    $aliceSecret,
+    $bobPublic
 );
 
 $encrypted = sodium_crypto_box($message, $nonce, $key);
 $ciphertext = $nonce . $encrypted;
 </code></pre>
+                        <a href="scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
                     </section>
-                    <section>
-                        <h4>Crypto Box - Bob</h4>
-                        <pre><code class="language-php">$nonce = substr($ciphertext, 0, SODIUM_CRYPTO_BOX_NONCEBYTES);
+                    <section data-auto-animate>
+                        <h4>Criptografia Assimétrica</h4>
+                        <pre><code class="language-php">// Cliente 2 - Bob
+$nonce = substr($ciphertext, 0, SODIUM_CRYPTO_BOX_NONCEBYTES);
 $ciphertext = substr($ciphertext, SODIUM_CRYPTO_BOX_NONCEBYTES);
 
 $key = sodium_crypto_box_keypair_from_secretkey_and_publickey(
-    $bobSecret, $alicePublic
+    $bobSecret,
+    $alicePublic
 );
 echo sodium_crypto_box_open($encrypted, $nonce, $key);
 </code></pre>
+                        <a href="scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
                     </section>
                 </section>
                 <section>
@@ -262,8 +290,9 @@ echo sodium_crypto_box_open($encrypted, $nonce, $key);
     SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
     SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE
 );
-// $argon2id$v=19$m=65536,t=2,p=1$20H8uU9EFq7GO2NFPrfDyg$Om/qimxzk9/7mub1s7bVEz/UbbIyikxBIrMlxZKPc/c
+// $argon2id$v=19$m=65536,t=2,p=1$20H8uU9EFq7GO2NFPrfDyg$Om/qimxzk9/7mub1s7b ...
 </code></pre>
+                        <a href="scripts/09-pwhash.php" class="small">scripts/09-pwhash.php</a>
                     </section>
                     <section>
                         <h4>Validando senhas</h4>
@@ -272,12 +301,21 @@ echo sodium_crypto_box_open($encrypted, $nonce, $key);
     $inputPassword
 );
 </code></pre>
+                        <a href="scripts/09-pwhash-verify.php" class="small">scripts/09-pwhash-verify.php</a>
                     </section>
+                </section>
+                <section>
+                    <h3>Recapitulando...</h3>
+                    <ul>
+                        <li>Criptografia não é simples</li>
+                        <li class="fragment">Não invente o seu próprio algoritmo</li>
+                        <li class="fragment">Utilize soluções modernas e atualizadas</li>
+                    </ul>
                 </section>
                 <section>
                     <h1>Obrigado!</h1>
                     <ul>
-                        <li>GitHub: <a href="https://github.com/vcampitelli">@vcampitelli</a></li>
+                        <li>GitHub: <a href="https://github.com/vcampitelli">vcampitelli</a></li>
                         <li>Twitter: <a href="https://twitter.com/vcampitelli">@vcampitelli</a></li>
                         <li>Slides: <a href="https://vcampitelli.github.io">vcampitelli.github.io</a></li>
                     </ul>
@@ -287,8 +325,7 @@ echo sodium_crypto_box_open($encrypted, $nonce, $key);
 
         <footer>
             <div id="footer">
-                <p>libsodium no PHP 7</p>
-                <p><a href="https://vcampitelli.github.io/">@vcampitelli</a></p>
+                <p>libsodium no PHP 7 &bull; <a href="https://vcampitelli.github.io/">@vcampitelli</a></p>
             </div>
         </footer>
 
