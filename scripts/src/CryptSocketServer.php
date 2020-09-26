@@ -35,12 +35,12 @@ class CryptSocketServer extends SocketServer
     /**
      * Cria um objeto para o novo cliente
      *
-     * @param  string $clientId ID do cliente
-     * @param  object $client   Cliente
+     * @param  int $clientId ID do cliente
+     * @param  resource $client Cliente
      *
      * @return bool
      */
-    protected function handleNewClient($clientId, $client) : bool
+    protected function handleNewClient(int $clientId, $client) : bool
     {
         // Envia a public key do server para o cliente
         fwrite($client, sodium_bin2hex($this->crypt->getBoxPublicKey()) . PHP_EOL);
@@ -51,8 +51,8 @@ class CryptSocketServer extends SocketServer
             echo "Erro ao receber public key de {$clientId}" . PHP_EOL;
             return false;
         }
-        echo "Recebido public key de {$clientId}: " . sodium_bin2hex($publicKey) . PHP_EOL;
-        $this->publicKeys[$clientId] = $publicKey;
+        echo "\t\e[2mRecebido public key de {$clientId}: \e[4m{$publicKey}\e[0m" . PHP_EOL;
+        $this->publicKeys[$clientId] = sodium_hex2bin($publicKey);
         return true;
     }
 
@@ -82,6 +82,6 @@ class CryptSocketServer extends SocketServer
      */
     protected function formatMessage(int $receiverId, string $message) : string
     {
-        return $this->crypt->encrypt($message, $this->publicKeys[$receiverId]);
+        return sodium_bin2hex($this->crypt->encrypt($message, $this->publicKeys[$receiverId]));
     }
 }

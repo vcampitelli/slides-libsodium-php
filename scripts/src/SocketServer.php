@@ -56,7 +56,7 @@ class SocketServer
         ob_implicit_flush();
         $this->socket = stream_socket_server("tcp://127.0.0.1:{$port}", $errno, $errstr);
         if (!$this->socket) {
-            throw new Exception($errstr, $errno);
+            throw new \Exception($errstr, $errno);
         }
 
         $this->init();
@@ -96,7 +96,7 @@ class SocketServer
                 if ($client) {
                     ++$this->clientId;
                     list($ip, $port) = explode(':', stream_socket_get_name($client, true));
-                    echo "Novo cliente conectado: {$this->clientId} (porta {$port})" . PHP_EOL;
+                    echo "\t\e[2m\e[32mNovo cliente conectado: {$this->clientId} ({$ip}:{$port})\e[0m" . PHP_EOL;
 
                     // Avisa os outros clientes que há um novo cliente conectado
                     if ($this->handleNewClient($this->clientId, $client)) {
@@ -117,7 +117,7 @@ class SocketServer
                 if (!$data) {
                     unset($this->clients[$clientId]);
                     fclose($client);
-                    echo "Cliente {$clientId} desconectou" . PHP_EOL;
+                    echo "\t\e[2m\e[31mCliente {$clientId} desconectou\e[0m" . PHP_EOL;
                     continue;
                 }
 
@@ -128,7 +128,7 @@ class SocketServer
                 $data = $this->readFrom($clientId, $data);
 
                 $color = $this->colors[($clientId - 1) % $colorsCount];
-                $data = "{$color}[{$clientId}] {$data}\e[0m";
+                $data = "{$color}[{$clientId}]: {$data}\e[0m";
                 echo $data . PHP_EOL;
                 foreach ($this->clients as $receiverId => $receiver) {
                     if ($receiverId != $clientId) {
@@ -142,12 +142,12 @@ class SocketServer
     /**
      * Cria um objeto para o novo cliente
      *
-     * @param  string $clientId ID do cliente
-     * @param  object $client   Cliente
+     * @param  int $clientId ID do cliente
+     * @param  resource $client Cliente
      *
      * @return bool
      */
-    protected function handleNewClient($clientId, $client) : bool
+    protected function handleNewClient(int $clientId, $client) : bool
     {
         return true;
     }

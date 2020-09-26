@@ -23,6 +23,13 @@ class SimpleCrypt
     public $boxPublicKey;
 
     /**
+     * Pool of generated keypairs
+     *
+     * @var array
+     */
+    private $boxKeypairFromPublicKey = [];
+
+    /**
      * Construtor
      */
     public function __construct()
@@ -44,10 +51,7 @@ class SimpleCrypt
      */
     public function encrypt(string $plainText, string $publicKey) : string
     {
-        $keypair = sodium_crypto_box_keypair_from_secretkey_and_publickey(
-            $this->boxSecretKey,
-            $publicKey
-        );
+        $keypair = $this->getBoxKeypairFromPublicKey($publicKey);
         $nonce = random_bytes(SODIUM_CRYPTO_BOX_NONCEBYTES);
         $ciphertext = sodium_crypto_box(
             $plainText,
@@ -55,6 +59,17 @@ class SimpleCrypt
             $keypair
         );
         return $nonce . $ciphertext;
+    }
+
+    protected function getBoxKeypairFromPublicKey(string $publicKey)
+    {
+        if (! isset($this->boxKeypairFromPublicKey[$publicKey])) {
+            $this->boxKeypairFromPublicKey[$publicKey] = sodium_crypto_box_keypair_from_secretkey_and_publickey(
+                $this->boxSecretKey,
+                $publicKey
+            );
+        }
+        return $this->boxKeypairFromPublicKey[$publicKey];
     }
 
     /**

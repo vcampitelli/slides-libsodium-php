@@ -16,7 +16,7 @@ if (!$socket) {
 
 // Recebe a public key do server
 $publicKey = trim(fgets($socket, SODIUM_CRYPTO_BOX_PUBLICKEYBYTES * 2 + 1));
-echo "Recebido public key do server: {$publicKey}" . PHP_EOL;
+echo "\e[2mRecebido public key do server: \e[4m{$publicKey}\e[0m" . PHP_EOL;
 $publicKey = sodium_hex2bin($publicKey);
 
 stream_set_timeout($socket, 1);
@@ -24,7 +24,7 @@ stream_set_timeout($socket, 1);
 // Gera o par de chaves e avisa o server
 require __DIR__ . '/src/SimpleCrypt.php';
 $crypt = new Vcampitelli\SimpleCrypt();
-fwrite($socket, $crypt->getBoxPublicKey() . PHP_EOL);
+fwrite($socket, sodium_bin2hex($crypt->getBoxPublicKey()) . PHP_EOL);
 
 while (true) {
     echo 'Digite aqui sua mensagem: ';
@@ -36,7 +36,7 @@ while (true) {
     echo 'Aguardando server...      ';
     $line = trim(fgets($socket));
     if (!empty($line)) {
-        echo PHP_EOL . $crypt->decrypt($line, $publicKey) . PHP_EOL;
+        echo PHP_EOL . $crypt->decrypt(sodium_hex2bin($line), $publicKey) . PHP_EOL;
         continue;
     }
     echo "\r";
