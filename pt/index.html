@@ -7,12 +7,12 @@
 
         <title>libsodium no PHP 7</title>
 
-        <link rel="stylesheet" href="revealjs/dist/reset.css">
-        <link rel="stylesheet" href="revealjs/dist/reveal.css">
-        <link rel="stylesheet" href="revealjs/dist/theme/league.css" id="theme">
+        <link rel="stylesheet" href="../revealjs/dist/reset.css">
+        <link rel="stylesheet" href="../revealjs/dist/reveal.css">
+        <link rel="stylesheet" href="../revealjs/dist/theme/league.css" id="theme">
 
-        <link rel="stylesheet" href="css/prism.css">
-        <link rel="stylesheet" href="css/app.css">
+        <link rel="stylesheet" href="../css/prism.css">
+        <link rel="stylesheet" href="../css/app.css">
     </head>
     <body>
         <div class="reveal">
@@ -194,7 +194,7 @@ $ciphertext = sodium_bin2hex(
     $nonce . sodium_crypto_secretbox($plaintext, $nonce, $key)
 );
 </code></pre>
-                        <a href="scripts/02-encrypt.php" class="small">scripts/02-encrypt.php</a>
+                        <a href="../scripts/02-encrypt.php" class="small">scripts/02-encrypt.php</a>
                     </section>
                     <section>
                         <h4>Criptografia Simétrica</h4>
@@ -210,7 +210,7 @@ $ciphertext = substr($ciphertext, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 // Descriptografa
 $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
 </code></pre>
-                        <a href="scripts/02-decrypt.php" class="small">scripts/02-decrypt.php</a>
+                        <a href="../scripts/02-decrypt.php" class="small">scripts/02-decrypt.php</a>
                     </section>
                 </section>
                 <section>
@@ -222,7 +222,7 @@ $key = trim(file_get_contents('03-auth.key'));
 // Gera a assinatura para o $ciphertext
 $auth = sodium_bin2hex(sodium_crypto_auth($ciphertext, $key));
 </code></pre>
-                        <a href="scripts/03-auth.php" class="small">scripts/03-auth.php</a>
+                        <a href="../scripts/03-auth.php" class="small">scripts/03-auth.php</a>
                     </section>
                     <section>
                         <h4>Assinatura - Validando</h4>
@@ -234,7 +234,7 @@ $key = trim(file_get_contents('03-auth.key'));
 // Verifica a assinatura
 return sodium_crypto_auth_verify($auth, $ciphertext, $key);
 </code></pre>
-                        <a href="scripts/03-checkauth.php" class="small">scripts/03-checkauth.php</a>
+                        <a href="../scripts/03-checkauth.php" class="small">scripts/03-checkauth.php</a>
                     </section>
                 </section>
                 <section>
@@ -250,7 +250,7 @@ $bobKeyPair = sodium_crypto_box_keypair();
 $bobPublic = sodium_crypto_box_publickey($bobKeyPair);
 $bobSecret = sodium_crypto_box_secretkey($bobKeyPair);
 </code></pre>
-                        <a href="scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+                        <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
                     </section>
                     <section data-auto-animate>
                         <h4>Criptografia Assimétrica</h4>
@@ -265,7 +265,7 @@ $key = sodium_crypto_box_keypair_from_secretkey_and_publickey(
 $encrypted = sodium_crypto_box($message, $nonce, $key);
 $ciphertext = $nonce . $encrypted;
 </code></pre>
-                        <a href="scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+                        <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
                     </section>
                     <section data-auto-animate>
                         <h4>Criptografia Assimétrica</h4>
@@ -279,7 +279,7 @@ $key = sodium_crypto_box_keypair_from_secretkey_and_publickey(
 );
 echo sodium_crypto_box_open($encrypted, $nonce, $key);
 </code></pre>
-                        <a href="scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+                        <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
                     </section>
                 </section>
                 <section>
@@ -292,7 +292,7 @@ echo sodium_crypto_box_open($encrypted, $nonce, $key);
 );
 // $argon2id$v=19$m=65536,t=2,p=1$20H8uU9EFq7GO2NFPrfDyg$Om/qimxzk9/7mub1s7b ...
 </code></pre>
-                        <a href="scripts/09-pwhash.php" class="small">scripts/09-pwhash.php</a>
+                        <a href="../scripts/09-pwhash.php" class="small">scripts/09-pwhash.php</a>
                     </section>
                     <section>
                         <h4>Validando senhas</h4>
@@ -301,7 +301,7 @@ echo sodium_crypto_box_open($encrypted, $nonce, $key);
     $inputPassword
 );
 </code></pre>
-                        <a href="scripts/09-pwhash-verify.php" class="small">scripts/09-pwhash-verify.php</a>
+                        <a href="../scripts/09-pwhash-verify.php" class="small">scripts/09-pwhash-verify.php</a>
                     </section>
                 </section>
                 <section>
@@ -329,12 +329,12 @@ echo sodium_crypto_box_open($encrypted, $nonce, $key);
             </div>
         </footer>
 
-        <script src="revealjs/dist/reveal.js"></script>
-        <script src="js/prism.js"></script>
+        <script src="../revealjs/dist/reveal.js"></script>
+        <script src="../js/prism.js"></script>
         <script>
             Reveal.initialize({
                 dependencies: [
-                    { src: 'js/prism.js', async: true }
+                    { src: '../js/prism.js', async: true }
                 ],
                 slideNumber: true,
                 mouseWheel: true,
