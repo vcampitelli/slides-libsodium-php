@@ -23,13 +23,10 @@ pre[class*="language-"] {
   box-shadow: none;
   font-size: 1.2rem;
 }
-code[class*="language-"] {
-  border: 0 !important;
-  text-shadow: none;
-}
-p > code[class*="language-"] {
-  box-shadow: none;
-  background-color: rgba(0, 0, 0, 0.2);
+code:not(.hljs) {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: burlywood;
+  padding: 0.25em 0.5em;
 }
 div.block {
   border: 3px #fff solid;
@@ -47,9 +44,6 @@ div.one-third {
   padding-top: 0;
   padding-bottom: 0;
 }
-.reveal .slides section .fragment.highlight-green.visible {
-  color: #e7ad52;
-}
 .small {
   font-size: 0.5em;
 }
@@ -61,7 +55,11 @@ div.one-third {
 }
 .d-flex.half-columns > div {
   flex-basis: 50%;
+  padding: 0 1em;
 }
 .flex-grow {
   flex-grow: 1;
+}
+.mb-1 {
+  margin-bottom: 1em !important;
 }

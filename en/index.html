@@ -12,7 +12,6 @@
         <link rel="stylesheet" href="../revealjs/dist/theme/league.css" id="theme">
         <link rel="stylesheet" href="../revealjs/plugin/highlight/monokai.css">
 
-        <!-- <link rel="stylesheet" href="../css/prism.css"> -->
         <link rel="stylesheet" href="../css/app.css">
     </head>
     <body>
@@ -31,7 +30,7 @@
                         <li>
                             PHP Developer on <a href="https://ottera.tv" target="_blank" rel="noopener">OTTera</a>
                         </li>
-                        <li>Cybersecurity enthuasist</li>
+                        <li>Cybersecurity enthusiast</li>
                         <li>10+ years developing with PHP</li>
                     </ul>
                 </section>
@@ -128,6 +127,7 @@
                 <section>
                     <section data-auto-animate>
                         <h2>Asymmetric Cryptography</h2>
+                        <p class="mb-1">&nbsp;</p>
                         <div class="d-flex half-columns">
                             <div>
                                 <h5 class="fragment" data-fragment-index="0">Public key</h5>
@@ -142,17 +142,45 @@
                     </section>
                     <section data-auto-animate>
                         <h2>Asymmetric Cryptography</h2>
-                        <p>If you want others to communicate with you...</p>
+                        <p class="mb-1">If you want others to communicate with you...</p>
                         <div class="d-flex half-columns">
                             <div>
                                 <h5>Public key</h5>
-                                <p class="fragment">Is used by the 3<sup>rd</sup> party to write texts to you</p>
-                                <p class="fragment">Encryption</p>
+                                <p class="fragment" data-fragment-index="0">Used by them to write texts to you</p>
+                                <p class="fragment" data-fragment-index="2">
+                                    &darr;<br>
+                                    Encryption
+                                </p>
                             </div>
                             <div>
                                 <h5>Private key</h5>
-                                <p class="fragment">Is used by you to read those texts</p>
-                                <p class="fragment">Decryption</p>
+                                <p class="fragment" data-fragment-index="1">Used by you to read those texts</p>
+                                <p class="fragment" data-fragment-index="2">
+                                    &darr;<br>
+                                    Decryption
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <p class="mb-1">If you want to communicate with others...</p>
+                        <div class="d-flex half-columns">
+                            <div>
+                                <h5>Public key</h5>
+                                <p class="fragment" data-fragment-index="1">Used by them to verify the texts were written by you</p>
+                                <p class="fragment" data-fragment-index="2">
+                                    &darr;<br>
+                                    Decryption
+                                </p>
+                            </div>
+                            <div>
+                                <h5>Private key</h5>
+                                <p class="fragment" data-fragment-index="0">Used by you to write texts<br>&nbsp;</p>
+                                <p class="fragment" data-fragment-index="2">
+                                    &darr;<br>
+                                    Encryption
+                                </p>
                             </div>
                         </div>
                     </section>
@@ -202,13 +230,13 @@
                         <h2>Asymmetric Cryptography</h2>
                         <div>
                             But I'm sure that instead of omitting that <code>$padding</code> parameter in the previous codes,
-                            every single one of you guys use <code>OPENSSL_PKCS1_OAEP_PADDING</code>, right?
+                            we always use <code>OPENSSL_PKCS1_OAEP_PADDING</code>, right?
                         </div>
                     </section>
                     <section data-auto-animate>
                         <h2>Asymmetric Cryptography</h2>
                         <div>
-                            After all, it's pretty obvious that the default value (<code>OPENSSL_PKCS1_PADDING</code>) uses PKCS#1 v1.5,
+                            After all, it's pretty obvious that the default <code>OPENSSL_PKCS1_PADDING</code> value uses PKCS#1 v1.5,
                             which is vulnerable to <em>Padding attacks</em>
                         </div>
                     </section>
@@ -230,7 +258,7 @@
                         <blockquote class="fragment">
                             A hash function is any function that can be used to map data of arbitrary size to fixed-size values
                         </blockquote>
-                        <a href="https://en.wikipedia.org/wiki/Hash_function" target="_blank" rel="noopener" class="small">
+                        <a href="https://en.wikipedia.org/wiki/Hash_function" target="_blank" rel="noopener" class="fragment small">
                             Wikipedia
                         </a>
                     </section>
@@ -435,7 +463,6 @@
 
         <script src="../revealjs/dist/reveal.js"></script>
         <script src="../revealjs/plugin/highlight/highlight.js"></script>
-        <!-- <script src="../js/prism.js"></script> -->
         <script>
             Reveal.initialize({
                 plugins: [ RevealHighlight ],
