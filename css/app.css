@@ -18,10 +18,9 @@
 #footer > p > a {
   color: #555;
 }
-pre[class*="language-"] {
-  border: 0;
-  box-shadow: none;
-  font-size: 1.2rem;
+#profile-pic {
+  max-width: 250px;
+  border-radius: 50%;
 }
 code:not(.hljs) {
   background-color: rgba(0, 0, 0, 0.1);
@@ -57,9 +56,28 @@ div.one-third {
   flex-basis: 50%;
   padding: 0 1em;
 }
+.d-flex.one-third-columns > div {
+  flex-basis: 33%;
+  padding: 0 1em;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
 .flex-grow {
   flex-grow: 1;
 }
 .mb-1 {
   margin-bottom: 1em !important;
+}
+.mr-1 {
+  margin-right: 1em !important;
+}
+.h4 {
+  color: #eee;
+  font-family: "League Gothic", Impact, sans-serif;
+  font-weight: normal;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
+  word-wrap: break-word;
 }
