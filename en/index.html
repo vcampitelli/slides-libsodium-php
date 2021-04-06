@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="author" content="Vinícius Campitelli">
+
+        <title>Using libsodium in PHP 7</title>
+
+        <link rel="stylesheet" href="../revealjs/dist/reset.css">
+        <link rel="stylesheet" href="../revealjs/dist/reveal.css">
+        <link rel="stylesheet" href="../revealjs/dist/theme/league.css" id="theme">
+        <link rel="stylesheet" href="../revealjs/plugin/highlight/monokai.css">
+
+        <link rel="stylesheet" href="../css/app.css">
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1 id="title">libsodium in PHP 7</h1>
+                </section>
+                <section data-auto-animate>
+                    <h2>About me</h2>
+                    <div class="d-flex">
+                        <div class="mr-1">
+                             <img src="../img/profile.png" alt="Vinícius Campitelli" id="profile-pic">
+                             <h4>Vinícius Campitelli</h4>
+                        </div>
+                        <ul>
+                            <li>
+                                Member of <a href="https://phpsp.org.br" target="_blank" rel="noopener">PHPSP</a>,
+                                a PHP group based in Sao Paulo
+                            </li>
+                            <li>
+                                PHP Developer on <a href="https://ottera.tv" target="_blank" rel="noopener">OTTera</a>
+                            </li>
+                            <li>Cybersecurity enthusiast</li>
+                            <li>10+ years developing with PHP</li>
+                        </ul>
+                    </div>
+                </section>
+                <section data-auto-animate>
+                    <h2>About me</h2>
+                    <div class="d-flex one-third-columns">
+                        <div>
+                            <svg role="img" width="64px" height="64px" viewBox="0 0 24 24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                                      fill="#eee"></path>
+                            </svg>
+                            <h4>Slides &amp; GitHub</h4>
+                            <a href="https://github.com/vcampitelli" target="_blank" rel="noopener" class="h4">vcampitelli</a>
+                        </div>
+                        <div>
+                            <svg role="img" width="64px" height="64px" viewBox="0 0 24 24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"
+                                      fill="#eee"></path>
+                            </svg>
+                            <h4>Twitter</h4>
+                            <a href="https://twitter.com/vcampitelli" target="_blank" rel="noopener" class="h4">vcampitelli</a>
+                        </div>
+                        <div>
+                            <svg height="72" viewBox="0 0 72 72" width="72" xmlns="http://www.w3.org/2000/svg">
+                                <g fill="none" fill-rule="evenodd">
+                                    <path d="M8,72 L64,72 C68.418278,72 72,68.418278 72,64 L72,8 C72,3.581722 68.418278,-8.11624501e-16 64,0 L8,0 C3.581722,8.11624501e-16 -5.41083001e-16,3.581722 0,8 L0,64 C5.41083001e-16,68.418278 3.581722,72 8,72 Z"
+                                          fill="#2b2e31"/>
+                                    <path d="M62,62 L51.315625,62 L51.315625,43.8021149 C51.315625,38.8127542 49.4197917,36.0245323 45.4707031,36.0245323 C41.1746094,36.0245323 38.9300781,38.9261103 38.9300781,43.8021149 L38.9300781,62 L28.6333333,62 L28.6333333,27.3333333 L38.9300781,27.3333333 L38.9300781,32.0029283 C38.9300781,32.0029283 42.0260417,26.2742151 49.3825521,26.2742151 C56.7356771,26.2742151 62,30.7644705 62,40.051212 L62,62 Z M16.349349,22.7940133 C12.8420573,22.7940133 10,19.9296567 10,16.3970067 C10,12.8643566 12.8420573,10 16.349349,10 C19.8566406,10 22.6970052,12.8643566 22.6970052,16.3970067 C22.6970052,19.9296567 19.8566406,22.7940133 16.349349,22.7940133 Z M11.0325521,62 L21.769401,62 L21.769401,27.3333333 L11.0325521,27.3333333 L11.0325521,62 Z"
+                                          fill="#eee"/>
+                                </g>
+                            </svg>
+                            <h4>LinkedIn</h4>
+                            <a href="https://github.com/vcampitelli" target="_blank" rel="noopener" class="h4">Vinícius Campitelli</a>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <section data-auto-animate>
+                        <h2>Cryptography is...</h2>
+                        <blockquote class="fragment">
+                            ... the practice and study of techniques for secure communication in the presence of third parties called adversaries
+                        </blockquote>
+                        <blockquote class="fragment">
+                            ... about constructing and analyzing protocols that prevent third parties or the public from reading private messages
+                        </blockquote>
+                        <a href="https://en.wikipedia.org/wiki/Cryptography" target="_blank" rel="noopener" class="fragment small">
+                            Wikipedia
+                        </a>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Cryptography is...</h2>
+                        <div class="d-flex">
+                            <div class="block fragment flex-grow" data-fragment-index="0">
+                                Plaintext
+                            </div>
+                            <div id="flow-cipher" class="fragment flex-grow" data-fragment-index="1">
+                                &rarr;
+                            </div>
+                            <div class="block r-stack fragment flex-grow" data-fragment-index="2">
+                                <span class="fragment fade-in-then-out" data-fragment-index="2">
+                                    Ciphertext
+                                </span>
+                                <code class="fragment">
+                                    UGxhaW50ZXh0Cg==
+                                </code>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+                <section>
+                    <section data-auto-animate>
+                        <h2>Symmetric Cryptography</h2>
+                        <p class="fragment">
+                            Uses the same key for both encryption and decryption
+                        </p>
+                        <p class="fragment">Also known as <strong>Secret-key Cryptography</strong></p>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Symmetric Cryptography</h2>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            public function encrypt($data) {
+                                $iv = openssl_random_pseudo_bytes(
+                                    openssl_cipher_iv_length('aes-256-ctr')
+                                );
+                                $ciphertext = openssl_encrypt(
+                                    $data,
+                                    'aes-256-ctr',         // cipher
+                                    '@rw97`b#1,EquJ[L2P2', // key
+                                    OPENSSL_RAW_DATA,      // flags
+                                    $iv                    // iv (nonce)
+                                );
+                                return base64_encode(
+                                    $iv . $ciphertext
+                                );
+                            }
+                        </code></pre>
+                        <p class="small">Simple symmetric cryptography example using OpenSSL</p>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Symmetric Cryptography</h2>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            public function decrypt($data) {
+                                $data = base64_decode($data);
+                                $ivSize = openssl_cipher_iv_length('aes-256-ctr');
+                                $iv = substr($data, 0, $ivSize);
+                                $data = substr($data, $ivSize);
+
+                                return openssl_decrypt(
+                                    $data,
+                                    'aes-256-ctr',         // cipher
+                                    '@rw97`b#1,EquJ[L2P2', // key
+                                    OPENSSL_RAW_DATA,      // flags
+                                    $iv                    // iv (nonce)
+                                );
+                            }
+                        </code></pre>
+                        <p class="small">Simple symmetric cryptography example using OpenSSL</p>
+                    </section>
+                </section>
+                <section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <p class="mb-1">&nbsp;</p>
+                        <div class="d-flex half-columns">
+                            <div>
+                                <h5 class="fragment" data-fragment-index="0">Public key</h5>
+                                <p class="fragment" data-fragment-index="2">Can be distributed to others</p>
+                            </div>
+                            <div>
+                                <h5 class="fragment" data-fragment-index="1">Private key</h5>
+                                <p class="fragment" data-fragment-index="3">Must remain with the owner</p>
+                            </div>
+                        </div>
+                        <p class="fragment">Also known as <strong>Public-key Cryptography</strong></p>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <p class="mb-1">If you want others to communicate with you...</p>
+                        <div class="d-flex half-columns">
+                            <div>
+                                <h5>Public key</h5>
+                                <p class="fragment" data-fragment-index="0">Used by them to write texts to you</p>
+                                <p class="fragment" data-fragment-index="2">
+                                    &darr;<br>
+                                    Encryption
+                                </p>
+                            </div>
+                            <div>
+                                <h5>Private key</h5>
+                                <p class="fragment" data-fragment-index="1">Used by you to read those texts</p>
+                                <p class="fragment" data-fragment-index="2">
+                                    &darr;<br>
+                                    Decryption
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <p class="mb-1">If you want to communicate with others...</p>
+                        <div class="d-flex half-columns">
+                            <div>
+                                <h5>Public key</h5>
+                                <p class="fragment" data-fragment-index="1">Used by them to verify the texts were written by you</p>
+                                <p class="fragment" data-fragment-index="2">
+                                    &darr;<br>
+                                    Decryption
+                                </p>
+                            </div>
+                            <div>
+                                <h5>Private key</h5>
+                                <p class="fragment" data-fragment-index="0">Used by you to write texts<br>&nbsp;</p>
+                                <p class="fragment" data-fragment-index="2">
+                                    &darr;<br>
+                                    Encryption
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <div>
+                            <pre><code class="php" data-trim>
+                                public function encrypt(
+                                    string $data,
+                                    string $publicKeyPath
+                                ): string {
+                                    $public = openssl_pkey_get_public(
+                                        "file://{$publicKeyPath}"
+                                    );
+                                    if (! openssl_public_encrypt($data, $crypted, $public)) {
+                                        throw new \RuntimeException("Can't encrypt data");
+                                    }
+                                    return $crypted;
+                                }
+                            </code></pre>
+                            <p class="small">Simple asymmetric cryptography using OpenSSL</p>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <div>
+                            <pre><code class="php" data-trim>
+                                public function decrypt(
+                                    string $data,
+                                    string $privateKeyPath,
+                                    string $passphrase = null
+                                ): string {
+                                    $key = openssl_pkey_get_private(
+                                        "file://{$privateKeyPath}",
+                                        $passphrase
+                                    );
+                                    if (! openssl_private_decrypt($data, $decrypted, $key)) {
+                                        throw new \RuntimeException("Can't decrypt data");
+                                    }
+                                    return $decrypted;
+                                }
+                            </code></pre>
+                            <p class="small">Simple asymmetric cryptography using OpenSSL</p>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <div>
+                            But I'm sure that instead of omitting that <code>$padding</code> parameter in the previous codes,
+                            we always use <code>OPENSSL_PKCS1_OAEP_PADDING</code>, right?
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <div>
+                            After all, it's pretty obvious that the default <code>OPENSSL_PKCS1_PADDING</code> value uses PKCS#1 v1.5,
+                            which is vulnerable to <em>Padding attacks</em>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Asymmetric Cryptography</h2>
+                        <div>
+                            And it's common knowledge that the RSA algorithm with a 2048 bit key can't handle data blocks larger than 214 bytes
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 class="text-white">RIGHT?</h3>
+                        <img src="https://media1.giphy.com/media/1LmBFphV4XNSw/giphy.gif">
+                    </section>
+                </section>
+                <section>
+                    <section data-auto-animate>
+                        <h2>Hashing</h2>
+                        <blockquote class="fragment">
+                            A hash function is any function that can be used to map data of arbitrary size to fixed-size values
+                        </blockquote>
+                        <a href="https://en.wikipedia.org/wiki/Hash_function" target="_blank" rel="noopener" class="fragment small">
+                            Wikipedia
+                        </a>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Hashing</h2>
+                        <h3>But I already know how to use that</h3>
+                        <pre class="fragment"><code class="php" data-trim>
+                            if (hash('sha512', $_POST['password']) !== $storedPassword) {
+                                throw new InvalidCredentialsException();
+                            }
+                            </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Hashing</h2>
+                        <h3>But do you know about Timing Attack?</h3>
+                        <blockquote class="fragment">
+                            is a side-channel attack in which the attacker attempts to compromise a cryptosystem by analyzing the time taken to execute cryptographic algorithms
+                        </blockquote>
+                        <a href="https://en.wikipedia.org/wiki/Timing_attack" target="_blank" rel="noopener" class="small">
+                            Wikipedia
+                        </a>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h3>libsodium</h3>
+                        <ul>
+                            <li>Modern library available in PHP core since 7.2</li>
+                            <li>Official website: <a href="http://libsodium.org/">libsodium.org</a></li>
+                            <li>Full documentation: <a href="https://paragonie.com/book/pecl-libsodium">pecl libsodium</a></li>
+                            <li>GitHub: <a href="https://github.com/jedisct1/libsodium-php">libsodium-php</a></li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <section data-auto-animate>
+                        <h4>Symmetric Cryptography</h4>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            // Reads key
+                            $key = trim(file_get_contents('02-encrypt.key'));
+
+                            // Generates a random nonce
+                            $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+
+                            // Prefixing nonce so we can retrieve it when decrypting
+                            $ciphertext = sodium_bin2hex(
+                                $nonce .
+                                    sodium_crypto_secretbox($plaintext, $nonce, $key)
+                            );
+                        </code></pre>
+                        <a href="../scripts/02-encrypt.php" class="small">scripts/02-encrypt.php</a>
+                    </section>
+                    <section data-auto-animate>
+                        <h4>Symmetric Cryptography</h4>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            $ciphertext = sodium_hex2bin($ciphertext);
+
+                            // Reads key
+                            $key = trim(file_get_contents('02-encrypt.key'));
+
+                            // Retrieving nonce
+                            $nonce = substr(
+                                $ciphertext,
+                                0,
+                                SODIUM_CRYPTO_SECRETBOX_NONCEBYTES
+                            );
+                            $ciphertext = substr(
+                                $ciphertext,
+                                SODIUM_CRYPTO_SECRETBOX_NONCEBYTES
+                            );
+
+                            // Decrypting
+                            $plaintext = sodium_crypto_secretbox_open(
+                                $ciphertext,
+                                $nonce,
+                                $key
+                            );
+                        </code></pre>
+                        <a href="../scripts/02-decrypt.php" class="small">scripts/02-decrypt.php</a>
+                    </section>
+                </section>
+                <section>
+                    <section data-auto-animate>
+                        <h4>Authentication</h4>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            // Reads key
+                            $key = trim(file_get_contents('03-auth.key'));
+
+                            // Generates a signature for the specified ciphertext
+                            $auth = sodium_bin2hex(sodium_crypto_auth($ciphertext, $key));
+                        </code></pre>
+                        <a href="../scripts/03-auth.php" class="small">scripts/03-auth.php</a>
+                    </section>
+                    <section data-auto-animate>
+                        <h4>Authentication</h4>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            $auth = sodium_hex2bin($auth);
+
+                            // Reads key
+                            $key = trim(file_get_contents('03-auth.key'));
+
+                            // Validates specified ciphertext
+                            return sodium_crypto_auth_verify($auth, $ciphertext, $key);
+                            </code></pre>
+                        <a href="../scripts/03-checkauth.php" class="small">scripts/03-checkauth.php</a>
+                    </section>
+                </section>
+                <section>
+                    <section data-auto-animate>
+                        <h4>Asymmetric Cryptography</h4>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            // User #1 (Alice)
+                            $aliceKeyPair = sodium_crypto_box_keypair();
+                            $alicePublic = sodium_crypto_box_publickey($aliceKeyPair);
+                            $aliceSecret = sodium_crypto_box_secretkey($aliceKeyPair);
+
+                            // User #2 (Bob)
+                            $bobKeyPair = sodium_crypto_box_keypair();
+                            $bobPublic = sodium_crypto_box_publickey($bobKeyPair);
+                            $bobSecret = sodium_crypto_box_secretkey($bobKeyPair);
+                        </code></pre>
+                        <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+                    </section>
+                    <section data-auto-animate>
+                        <h4>Asymmetric Cryptography</h4>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            // User #1 (Alice)
+                            $nonce = random_bytes(SODIUM_CRYPTO_BOX_NONCEBYTES);
+
+                            $key = sodium_crypto_box_keypair_from_secretkey_and_publickey(
+                                $aliceSecret,
+                                $bobPublic
+                            );
+
+                            $encrypted = sodium_crypto_box($message, $nonce, $key);
+                            $ciphertext = $nonce . $encrypted;
+                        </code></pre>
+                        <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+                    </section>
+                    <section data-auto-animate>
+                        <h4>Asymmetric Cryptography</h4>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            // User #2 (Bob)
+                            $nonce = substr($ciphertext, 0, SODIUM_CRYPTO_BOX_NONCEBYTES);
+                            $ciphertext = substr($ciphertext, SODIUM_CRYPTO_BOX_NONCEBYTES);
+
+                            $key = sodium_crypto_box_keypair_from_secretkey_and_publickey(
+                                $bobSecret,
+                                $alicePublic
+                            );
+                            echo sodium_crypto_box_open($encrypted, $nonce, $key);
+                        </code></pre>
+                        <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h4>Storing passwords</h4>
+                        <pre><code class="php" data-trim data-line-numbers>sodium_crypto_pwhash_str(
+    $password,
+    SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
+    SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE
+);
+// $argon2id$v=19$m=65536,t=2,p=1$20H8uU9EFq7GO2NFPrfDyg$Om/qimxzk9/7mub1s7b ...
+</code></pre>
+                        <a href="../scripts/09-pwhash.php" class="small">scripts/09-pwhash.php</a>
+                    </section>
+                    <section>
+                        <h4>Validating passwords</h4>
+                        <pre><code class="php" data-trim data-line-numbers>sodium_crypto_pwhash_str_verify(
+    $storedPassword,
+    $inputPassword
+);
+</code></pre>
+                        <a href="../scripts/09-pwhash-verify.php" class="small">scripts/09-pwhash-verify.php</a>
+                    </section>
+                </section>
+                <section>
+                    <h3>Recap</h3>
+                    <ul>
+                        <li>Cryptography is not easy</li>
+                        <li class="fragment">DO NOT create your own algorithm</li>
+                        <li class="fragment">Use modern and up-to-date solutions</li>
+                    </ul>
+                </section>
+                <section>
+                    <h1>Thanks!</h1>
+                    <ul>
+                        <li>GitHub: <a href="https://github.com/vcampitelli">vcampitelli</a></li>
+                        <li>Twitter: <a href="https://twitter.com/vcampitelli">@vcampitelli</a></li>
+                        <li>Slides: <a href="https://vcampitelli.github.io">vcampitelli.github.io</a></li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+
+        <footer>
+            <div id="footer">
+                <p>libsodium in PHP 7 &bull; <a href="https://vcampitelli.github.io/">@vcampitelli</a></p>
+            </div>
+        </footer>
+
+        <script src="../revealjs/dist/reveal.js"></script>
+        <script src="../revealjs/plugin/highlight/highlight.js"></script>
+        <script>
+            Reveal.initialize({
+                plugins: [ RevealHighlight ],
+                slideNumber: true,
+                mouseWheel: true,
+                history: true,
+                overview: false
+            });
+        </script>
+    </body>
+</html>

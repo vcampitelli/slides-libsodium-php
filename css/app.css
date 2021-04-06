@@ -18,6 +18,15 @@
 #footer > p > a {
   color: #555;
 }
+#profile-pic {
+  max-width: 250px;
+  border-radius: 50%;
+}
+code:not(.hljs) {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: burlywood;
+  padding: 0.25em 0.5em;
+}
 pre[class*="language-"] {
   border: 0;
   box-shadow: none;
@@ -33,11 +42,11 @@ p > code[class*="language-"] {
 }
 div.block {
   border: 3px #fff solid;
+  padding: 0.5em;
+  box-sizing: border-box;
 }
 div.one-third {
   float: left;
-  padding: 0.5em;
-  box-sizing: border-box;
   width: 31.333333%;
   margin-right: 1%;
   margin-left: 1%;
@@ -47,12 +56,41 @@ div.one-third {
   padding-top: 0;
   padding-bottom: 0;
 }
-.reveal .slides section .fragment.highlight-green.visible {
-  color: #e7ad52;
-}
 .small {
   font-size: 0.5em;
 }
 .text-white {
   color: #fff !important;
+}
+.d-flex {
+  display: flex;
+}
+.d-flex.half-columns > div {
+  flex-basis: 50%;
+  padding: 0 1em;
+}
+.d-flex.one-third-columns > div {
+  flex-basis: 33%;
+  padding: 0 1em;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.flex-grow {
+  flex-grow: 1;
+}
+.mb-1 {
+  margin-bottom: 1em !important;
+}
+.mr-1 {
+  margin-right: 1em !important;
+}
+.h4 {
+  color: #eee;
+  font-family: "League Gothic", Impact, sans-serif;
+  font-weight: normal;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
+  word-wrap: break-word;
 }
