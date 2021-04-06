@@ -27,6 +27,19 @@ code:not(.hljs) {
   color: burlywood;
   padding: 0.25em 0.5em;
 }
+pre[class*="language-"] {
+  border: 0;
+  box-shadow: none;
+  font-size: 1.2rem;
+}
+code[class*="language-"] {
+  border: 0 !important;
+  text-shadow: none;
+}
+p > code[class*="language-"] {
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.2);
+}
 div.block {
   border: 3px #fff solid;
   padding: 0.5em;
