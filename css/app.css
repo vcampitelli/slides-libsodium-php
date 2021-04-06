@@ -22,10 +22,14 @@
   max-width: 250px;
   border-radius: 50%;
 }
-code:not(.hljs) {
+code:not(.hljs):not(.plain) {
   background-color: rgba(0, 0, 0, 0.1);
   color: burlywood;
   padding: 0.25em 0.5em;
+}
+pre {
+  scrollbar-color: #00090f #01121f;
+  scrollbar-width: thin;
 }
 pre[class*="language-"] {
   border: 0;
@@ -55,6 +59,9 @@ div.one-third {
   font-size: 2em;
   padding-top: 0;
   padding-bottom: 0;
+}
+.smaller {
+  font-size: 0.75em;
 }
 .small {
   font-size: 0.5em;

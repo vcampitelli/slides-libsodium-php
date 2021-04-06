@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="../revealjs/dist/reset.css">
         <link rel="stylesheet" href="../revealjs/dist/reveal.css">
         <link rel="stylesheet" href="../revealjs/dist/theme/league.css" id="theme">
-        <link rel="stylesheet" href="../revealjs/plugin/highlight/monokai.css">
+        <link rel="stylesheet" href="../css/night-owl.css">
 
         <link rel="stylesheet" href="../css/app.css">
     </head>
@@ -33,7 +33,7 @@
                                 a PHP group based in Sao Paulo
                             </li>
                             <li>
-                                PHP Developer on <a href="https://ottera.tv" target="_blank" rel="noopener">OTTera</a>
+                                PHP Developer at <a href="https://ottera.tv" target="_blank" rel="noopener">OTTera</a>
                             </li>
                             <li>Cybersecurity enthusiast</li>
                             <li>10+ years developing with PHP</li>
@@ -71,7 +71,7 @@
                                 </g>
                             </svg>
                             <h4>LinkedIn</h4>
-                            <a href="https://github.com/vcampitelli" target="_blank" rel="noopener" class="h4">Vinícius Campitelli</a>
+                            <a href="https://linkedin.com/in/viniciuscampitelli" target="_blank" rel="noopener" class="h4">Vinícius Campitelli</a>
                         </div>
                     </div>
                 </section>
@@ -101,26 +101,36 @@
                                 <span class="fragment fade-in-then-out" data-fragment-index="2">
                                     Ciphertext
                                 </span>
-                                <code class="fragment">
+                                <code class="fragment plain">
                                     UGxhaW50ZXh0Cg==
                                 </code>
                             </div>
                         </div>
+
+                        <aside class="notes">
+                            So, cryptography is basically the process that converts a text in something unintelligible
+                        </aside>
                     </section>
                 </section>
                 <section>
                     <section data-auto-animate>
-                        <h2>Symmetric Cryptography</h2>
+                        <h2 class="fragment">Symmetric Cryptography</h2>
                         <p class="fragment">
                             Uses the same key for both encryption and decryption
                         </p>
                         <p class="fragment">Also known as <strong>Secret-key Cryptography</strong></p>
+
+                        <aside class="notes">
+                            There are two types of cryptography systems. The first one is called symmetric cryptography, as
+                            it uses the exact same key for encrypting and decrypting. This key is sometimes referred to as
+                            "secret", so that's why those algorithms are also called "Secret-key cryptography".
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h2>Symmetric Cryptography</h2>
-                        <pre><code class="php" data-trim data-line-numbers>
+                        <pre data-id="pre"><code class="php" data-trim data-line-numbers>
                             public function encrypt($data) {
-                                $iv = openssl_random_pseudo_bytes(
+                                $iv = random_bytes(
                                     openssl_cipher_iv_length('aes-256-ctr')
                                 );
                                 $ciphertext = openssl_encrypt(
@@ -136,6 +146,54 @@
                             }
                         </code></pre>
                         <p class="small">Simple symmetric cryptography example using OpenSSL</p>
+
+                        <aside class="notes">
+                            Here's a simple code with OpenSSL, a very known library used for secure communications.
+                            We are using this openssl_encrypt function, it's quite simple to use, as you can see.<br><br>
+
+                            First, you just have to known the most recommended algorithms. In this example, I chose AES
+                            as my block cipher, with a 256-bit key and the Counter mode of operation.<br><br>
+
+                            But coming back to our example, the next step is to generate the initialization vector using
+                            random_bytes or another random number generator, like openssl_pseudo_random_bytes. Please, do
+                            not use rand, mt_rand or other stuff like that, they are not really random and so they don't
+                            provide the necessary security we want.
+                        </aside>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Symmetric Cryptography</h2>
+                        <pre data-id="pre"><code class="php" data-trim data-line-numbers>
+                            public function encrypt($data) {
+                                $iv = random_bytes(
+                                    openssl_cipher_iv_length('aes-256-gcm')
+                                );
+                                $ciphertext = openssl_encrypt(
+                                    $data,
+                                    'aes-256-gcm',         // cipher
+                                    '@rw97`b#1,EquJ[L2P2', // key
+                                    OPENSSL_RAW_DATA,      // flags
+                                    $iv,                   // iv (nonce)
+                                    $tag,                  // tag
+                                    null,                  // aad
+                                    16                     // tag length
+                                );
+                                return base64_encode(
+                                    $iv . $tag . $ciphertext
+                                );
+                            }
+                        </code></pre>
+                        <p class="small">Simple symmetric cryptography example using OpenSSL</p>
+
+                        <aside class="notes">
+                            But of course in real production systems, I'll probably use GCM, the Galois Counter Mode,
+                            because it also guarantees authentication encryption. Everybody knows that encryption without
+                            authentication is very susceptible to tampering.<br><br>
+
+                            Then, I just need to pass one more argument for the authentication tag that will be passed
+                            by reference. And I can also pass another parameter for the additional authentication data
+                            that I want, and I can actually pass an eight parameter if I want to manually set the length
+                            for the authentication data.
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h2>Symmetric Cryptography</h2>
@@ -160,19 +218,32 @@
                 </section>
                 <section>
                     <section data-auto-animate>
-                        <h2>Asymmetric Cryptography</h2>
+                        <h2 class="fragment" data-fragment-index="0">Asymmetric Cryptography</h2>
                         <p class="mb-1">&nbsp;</p>
                         <div class="d-flex half-columns">
                             <div>
-                                <h5 class="fragment" data-fragment-index="0">Public key</h5>
-                                <p class="fragment" data-fragment-index="2">Can be distributed to others</p>
+                                <h5 class="fragment" data-fragment-index="1">Public key</h5>
+                                <p class="fragment" data-fragment-index="3">Can be distributed to others</p>
                             </div>
                             <div>
-                                <h5 class="fragment" data-fragment-index="1">Private key</h5>
-                                <p class="fragment" data-fragment-index="3">Must remain with the owner</p>
+                                <h5 class="fragment" data-fragment-index="2">Private key</h5>
+                                <p class="fragment" data-fragment-index="4">Must remain with the owner</p>
                             </div>
                         </div>
                         <p class="fragment">Also known as <strong>Public-key Cryptography</strong></p>
+
+                        <aside class="notes">
+                            If the first type of cryptosystems is called Symmetric Cryptography because it uses the
+                            same key for both processes, then the second second type is called asymmetric because there
+                            are two keys involved: one for encryption and another one for decryption.<br><br>
+
+                            They are called public and private keys for obvious reasons: the first one will normally be
+                            distributed to others and the second should never leave the owner. If someone shares the
+                            private key, for instance by accidentally committing it to Git, then the underlying system
+                            will be compromised and you need to regenerate all encrypted data with a new pair.<br><br>
+
+                            So that's why this is also known as "Public-key cryptography".
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h2>Asymmetric Cryptography</h2>
@@ -195,6 +266,12 @@
                                 </p>
                             </div>
                         </div>
+
+                        <aside class="notes">
+                            Just imagine the scenario where you want someone else to communicate with your system. Then,
+                            you send them your public key and they will use it to write to you. When you receive these
+                            encrypted texts, you just need to use your private key to decrypt that information.
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h2>Asymmetric Cryptography</h2>
@@ -217,6 +294,20 @@
                                 </p>
                             </div>
                         </div>
+
+                        <aside class="notes">
+                            But if you want to communicate with others, is the other way around: you use your private key
+                            to encrypt data and the receiving party uses your public key to verify if that information was
+                            really written by you. <br><br>
+
+                            This is basically how HTTPS works. Ok, I'm really oversimplifying things here... but essentialy,
+                            the web server uses the private key to encrypt the information that will be sent to you, and your
+                            browser checks if their public key matches. <br><br>
+
+                            Of course there are several other aspects to this, like digital signatures, certificates, a
+                            certificate authority that is responsible for assuring the server's identity. All of this is
+                            called Public-key Infrastructure. But I guess you can understand what's behind the scenes.
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h2>Asymmetric Cryptography</h2>
@@ -236,6 +327,11 @@
                                 }
                             </code></pre>
                             <p class="small">Simple asymmetric cryptography using OpenSSL</p>
+
+                            <aside class="notes">
+                                Again, I'm using OpenSSL to encrypt some information. First, I just need to extract the
+                                public key from a file and encrypt the data.
+                            </aside>
                         </div>
                     </section>
                     <section data-auto-animate>
@@ -258,6 +354,11 @@
                                 }
                             </code></pre>
                             <p class="small">Simple asymmetric cryptography using OpenSSL</p>
+
+                            <aside class="notes">
+                                Then I use the private key to decrypt it. This is very straightforward, but again this
+                                is not a code ready for production.
+                            </aside>
                         </div>
                     </section>
                     <section data-auto-animate>
@@ -295,23 +396,52 @@
                         <a href="https://en.wikipedia.org/wiki/Hash_function" target="_blank" rel="noopener" class="fragment small">
                             Wikipedia
                         </a>
+
+                        <aside class="notes">
+                            The most common algorithms are MD5 and SHA1. But please, do not use them, as they were broken
+                            several years ago. They suffer from a large variety of attacks, like dictionary and collision.
+                            Use SHA-256 or SHA-512 instead.
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h2>Hashing</h2>
-                        <h3>But I already know how to use that</h3>
+                        <h4>But I already know how to use that</h4>
                         <pre class="fragment"><code class="php" data-trim>
                             if (hash('sha512', $_POST['password']) !== $storedPassword) {
                                 throw new InvalidCredentialsException();
                             }
-                            </code></pre>
+                        </code></pre>
+
+                        <aside class="notes">
+                            The most common use of hashing is for storing passwords in a database. Back in the day, we
+                            just hashed it using MD5. Then, we learned that is was weak to dictionary attacks, which is
+                            when we just compute the hash for thousands or even millions of words.<br><br>
+
+                            So we started using salts. That's just prepending the password with some text only the system
+                            knows. But if you use the same salt to every user, than anyone with the same password will
+                            have the same hash. <br>
+                            So you'll start using a unique salt to each user. Maybe from a specific database field that
+                            no one knows, like the user ID or creation date. But if the attacker was in possession of a
+                            database dump, than it would just be a matter of time until he discovers which field was used.
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h2>Hashing</h2>
-                        <h3>But do you know about Timing Attack?</h3>
-                        <blockquote class="fragment">
+                        <h4>But do you know about Timing Attacks?</h4>
+                        <blockquote class="fragment small">
                             is a side-channel attack in which the attacker attempts to compromise a cryptosystem by analyzing the time taken to execute cryptographic algorithms
                         </blockquote>
-                        <a href="https://en.wikipedia.org/wiki/Timing_attack" target="_blank" rel="noopener" class="small">
+                        <a href="https://en.wikipedia.org/wiki/Timing_attack" target="_blank" rel="noopener" class="fragment small">
+                            Wikipedia
+                        </a>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Hashing</h2>
+                        <h4>And what about Rainbow Tables?</h4>
+                        <blockquote class="fragment small">
+                            is a precomputed table for caching the output of cryptographic hash functions
+                        </blockquote>
+                        <a href="https://en.wikipedia.org/wiki/Rainbow_table" target="_blank" rel="noopener" class="fragment small">
                             Wikipedia
                         </a>
                     </section>
@@ -331,27 +461,45 @@
                     <section data-auto-animate>
                         <h4>Symmetric Cryptography</h4>
                         <pre><code class="php" data-trim data-line-numbers>
-                            // Reads key
-                            $key = trim(file_get_contents('02-encrypt.key'));
+                            // APP_SECRET_KEY should be
+                            // SODIUM_CRYPTO_BOX_SECRETKEYBYTES bytes long
 
                             // Generates a random nonce
                             $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 
-                            // Prefixing nonce so we can retrieve it when decrypting
-                            $ciphertext = sodium_bin2hex(
-                                $nonce .
-                                    sodium_crypto_secretbox($plaintext, $nonce, $key)
+                            $ciphertext = sodium_crypto_secretbox(
+                                $plaintext,
+                                $nonce,
+                                APP_SECRET_KEY
                             );
+
+                            // Prefixing nonce so we can retrieve it when decrypting
+                            $ciphertext = sodium_bin2hex($nonce . $ciphertext);
                         </code></pre>
                         <a href="../scripts/02-encrypt.php" class="small">scripts/02-encrypt.php</a>
+
+                        <aside class="notes">
+                            Let's start with sodium_crypto_secretbox(), that is a secret-key encryption that also offers
+                            authentication, like GCM.<br><br>
+                            First, we need to generate a key. Libsodium comes with a set of predefined constants to help
+                            us with that. So, we just use SODIUM_CRYPTO_BOX_SECRETKEYBYTES, that evaluates to 32.<br><br>
+                            Then, we generate the nonce, that should be a random value that can't be reused, so we use
+                            PHP 7's random_bytes() function to do that, and we again use another constant to know how long
+                            that nonce should be: SODIUM_CRYPTO_SECRETBOX_NONCEBYTES.<br><br>
+                            Now, we just call sodium_crypto_secretbox(). It's output is binary, so we call bin2hex() to
+                            convert it to hexadecimal.<br><br>
+                            But before that, we do need to prefix the nonce, as it need to be reused later. There's
+                            no security problem when doing this.<br><br>
+                            The real beauty here is that we don't need to know what's really happening. We just need to
+                            trust the library.<br><br>
+                            But if you do want to know, it uses XSalsa20 as a stream cipher to encrypt data and Poly1305
+                            to authenticate it.
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h4>Symmetric Cryptography</h4>
                         <pre><code class="php" data-trim data-line-numbers>
                             $ciphertext = sodium_hex2bin($ciphertext);
-
-                            // Reads key
-                            $key = trim(file_get_contents('02-encrypt.key'));
 
                             // Retrieving nonce
                             $nonce = substr(
@@ -368,42 +516,75 @@
                             $plaintext = sodium_crypto_secretbox_open(
                                 $ciphertext,
                                 $nonce,
-                                $key
+                                APP_SECRET_KEY
                             );
                         </code></pre>
                         <a href="../scripts/02-decrypt.php" class="small">scripts/02-decrypt.php</a>
+
+                        <aside class="notes">
+                            To decrypt it, we just undo everything we did earlier: we convert the hex value to binary,
+                            separate nonce from the ciphertext using substr() as we do know it contains
+                            SODIUM_CRYPTO_SECRETBOX_NONCEBYTES characters. Then, we use the secret box counterpart,
+                            sodium_crypto_secretbox_open(), to retrieve the plain text.
+                        </aside>
                     </section>
                 </section>
                 <section>
                     <section data-auto-animate>
-                        <h4>Authentication</h4>
-                        <pre><code class="php" data-trim data-line-numbers>
-                            // Reads key
-                            $key = trim(file_get_contents('03-auth.key'));
+                        <h4 class="fragment">Authentication</h4>
+                        <pre class="fragment"><code class="php" data-trim data-line-numbers>
+                            // APP_AUTH_KEY should be
+                            // SODIUM_CRYPTO_AUTH_KEYBYTES bytes long
 
-                            // Generates a signature for the specified ciphertext
-                            $auth = sodium_bin2hex(sodium_crypto_auth($ciphertext, $key));
+                            // Authenticates the specified ciphertext
+                            $auth = sodium_bin2hex(
+                                sodium_crypto_auth($ciphertext, APP_AUTH_KEY)
+                            );
                         </code></pre>
-                        <a href="../scripts/03-auth.php" class="small">scripts/03-auth.php</a>
+                        <a href="../scripts/03-auth.php" class="fragment small">scripts/03-auth.php</a>
+
+                        <aside class="notes">
+                            But sometimes, we don't need to encrypt the data. We just need to make sure no one tampers
+                            with it. In other words, we need integrity.<br>
+
+                            Libsodium has this sodium_crypto_auth() function that does that. It has "crypto" in its name
+                            because it depends on a secret-key. This way, we can also guarantees authenticity. That's
+                            when we can trust the issuer for that information, because only the keeper of the secret-key
+                            <em>(are there any Helloween fans there?)</em> can generate this value.<br><br>
+
+                            The algorithm used is HMAC-SHA512-256. HMAC stands for Hash-based Message Authentication Code.
+                            As the name says by itself, a Message Authentication Code is a piece of information that
+                            authenticates a message. They also go by "tag", that we already say in those OpenSSL
+                            examples earlier.<br><br>
+                            It uses a SHA-512 function with the output truncated to look like a 256. It does that because
+                            SHA-512 is very fast in 64-bit processors.
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h4>Authentication</h4>
                         <pre><code class="php" data-trim data-line-numbers>
                             $auth = sodium_hex2bin($auth);
 
-                            // Reads key
-                            $key = trim(file_get_contents('03-auth.key'));
-
-                            // Validates specified ciphertext
-                            return sodium_crypto_auth_verify($auth, $ciphertext, $key);
-                            </code></pre>
+                            // Validates authentication data
+                            if (! sodium_crypto_auth_verify(
+                                $auth,
+                                $ciphertext,
+                                APP_AUTH_KEY
+                            )) {
+                                throw new RuntimeException('Authentication failed');
+                            }
+                        </code></pre>
                         <a href="../scripts/03-checkauth.php" class="small">scripts/03-checkauth.php</a>
+
+                        <aside class="notes">
+                            To check if the authentication is valid, we just need to use sodium_crypto_auth_verify.
+                        </aside>
                     </section>
                 </section>
                 <section>
                     <section data-auto-animate>
-                        <h4>Asymmetric Cryptography</h4>
-                        <pre><code class="php" data-trim data-line-numbers>
+                        <h4 class="fragment">Asymmetric Cryptography</h4>
+                        <pre class="fragment"><code class="php" data-trim data-line-numbers>
                             // User #1 (Alice)
                             $aliceKeyPair = sodium_crypto_box_keypair();
                             $alicePublic = sodium_crypto_box_publickey($aliceKeyPair);
@@ -414,7 +595,26 @@
                             $bobPublic = sodium_crypto_box_publickey($bobKeyPair);
                             $bobSecret = sodium_crypto_box_secretkey($bobKeyPair);
                         </code></pre>
-                        <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+                        <a href="../scripts/src/SimpleCrypt.php" class="fragment small">scripts/src/SimpleCrypt.php</a>
+
+                        <aside class="notes">
+                            Now, if we want to create a simple chat system where two people can talk to each other, we'll
+                            use asymmetric encryption.<br><br>
+
+                            In the cryptography world, instead of saying "Person A" and "Person B", we can use some
+                            placeholders, like Alice, Bob and Charlie. We can also use Eve to identify someone that is
+                            eavesdropping the communication and Mallory as a malicious attacker. <br><br>
+
+                            So, if Alice wants to chat with Bob, first they need to generate a pair of keys. Then, each
+                            one will send the other their public key. There's a correct way of doing this, the most famous
+                            one being called Diffe-Hellman Key Exchange. There's a great Wikipedia article that illustrates
+                            how this algorithm works by mixing paints.<br><br>
+
+                            Back to the process itself, when Alice wants to send a message to Bob, she encrypts it using
+                            his public key combined with her private one. Now, when Bob receives that message, first he uses
+                            her public key to check that the message was indeed sent by Alice. Then, he uses his private key
+                            to decrypt that message and read the text itself. Easy, right?
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h4>Asymmetric Cryptography</h4>
@@ -450,15 +650,25 @@
                 </section>
                 <section>
                     <section>
-                        <h4>Storing passwords</h4>
-                        <pre><code class="php" data-trim data-line-numbers>sodium_crypto_pwhash_str(
+                        <h4 class="fragment">Storing passwords</h4>
+                        <pre class="fragment"><code class="php" data-trim data-line-numbers>sodium_crypto_pwhash_str(
     $password,
     SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
     SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE
 );
 // $argon2id$v=19$m=65536,t=2,p=1$20H8uU9EFq7GO2NFPrfDyg$Om/qimxzk9/7mub1s7b ...
 </code></pre>
-                        <a href="../scripts/09-pwhash.php" class="small">scripts/09-pwhash.php</a>
+                        <a href="../scripts/09-pwhash.php" class="fragment small">scripts/09-pwhash.php</a>
+
+                        <aside class="notes">
+                            PHP did us a huge favor when password_hash() was created in version 5.5 using bcrypt. But it
+                            was only in 7.2 that it supported Argon2, that is a great hashing algorithm. And you
+                            have to remember to pass the constant as it's second parameter. And you should also know
+                            that there are two types of variations: Argon2I and Argon2ID. They are resistant to different
+                            kind of attacks, the latter only being added in PHP 7.3.<br>
+                            Again, libsodium provides secure options with the sodium_crypto_pwhash_str() function,
+                            as it uses Argon2ID by default.
+                        </aside>
                     </section>
                     <section>
                         <h4>Validating passwords</h4>
@@ -471,20 +681,59 @@
                     </section>
                 </section>
                 <section>
-                    <h3>Recap</h3>
-                    <ul>
-                        <li>Cryptography is not easy</li>
-                        <li class="fragment">DO NOT create your own algorithm</li>
-                        <li class="fragment">Use modern and up-to-date solutions</li>
+                    <h2>More examples!</h2>
+                </section>
+                <section>
+                    <h2>Recap</h2>
+                    <ul class="smaller">
+                        <li class="mb-1">Cryptography is not easy</li>
+                        <li class="fragment mb-1">
+                            <strong>DO NOT</strong> use your own algorithms
+                            <em class="fragment">, unless you are a competition-winner cryptologist</em>
+                        </li>
+                        <li class="fragment mb-1">
+                            You <strong>CAN</strong> use OpenSSL and others libraries <em>(like phpseclib)</em>, as long
+                            as you know what you're doing <em>(and what they're doing too)</em>
+                        </li>
+                        <li class="fragment">
+                            To be safe, always use modern and up-to-date solutions
+                        </li>
                     </ul>
                 </section>
                 <section>
                     <h1>Thanks!</h1>
-                    <ul>
-                        <li>GitHub: <a href="https://github.com/vcampitelli">vcampitelli</a></li>
-                        <li>Twitter: <a href="https://twitter.com/vcampitelli">@vcampitelli</a></li>
-                        <li>Slides: <a href="https://vcampitelli.github.io">vcampitelli.github.io</a></li>
-                    </ul>
+                    <div class="d-flex one-third-columns">
+                        <div>
+                            <svg role="img" width="64px" height="64px" viewBox="0 0 24 24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                                      fill="#eee"></path>
+                            </svg>
+                            <h4>Slides &amp; GitHub</h4>
+                            <a href="https://github.com/vcampitelli" target="_blank" rel="noopener" class="h4">vcampitelli</a>
+                        </div>
+                        <div>
+                            <svg role="img" width="64px" height="64px" viewBox="0 0 24 24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"
+                                      fill="#eee"></path>
+                            </svg>
+                            <h4>Twitter</h4>
+                            <a href="https://twitter.com/vcampitelli" target="_blank" rel="noopener" class="h4">vcampitelli</a>
+                        </div>
+                        <div>
+                            <svg height="72" viewBox="0 0 72 72" width="72" xmlns="http://www.w3.org/2000/svg">
+                                <g fill="none" fill-rule="evenodd">
+                                    <path d="M8,72 L64,72 C68.418278,72 72,68.418278 72,64 L72,8 C72,3.581722 68.418278,-8.11624501e-16 64,0 L8,0 C3.581722,8.11624501e-16 -5.41083001e-16,3.581722 0,8 L0,64 C5.41083001e-16,68.418278 3.581722,72 8,72 Z"
+                                          fill="#2b2e31"/>
+                                    <path d="M62,62 L51.315625,62 L51.315625,43.8021149 C51.315625,38.8127542 49.4197917,36.0245323 45.4707031,36.0245323 C41.1746094,36.0245323 38.9300781,38.9261103 38.9300781,43.8021149 L38.9300781,62 L28.6333333,62 L28.6333333,27.3333333 L38.9300781,27.3333333 L38.9300781,32.0029283 C38.9300781,32.0029283 42.0260417,26.2742151 49.3825521,26.2742151 C56.7356771,26.2742151 62,30.7644705 62,40.051212 L62,62 Z M16.349349,22.7940133 C12.8420573,22.7940133 10,19.9296567 10,16.3970067 C10,12.8643566 12.8420573,10 16.349349,10 C19.8566406,10 22.6970052,12.8643566 22.6970052,16.3970067 C22.6970052,19.9296567 19.8566406,22.7940133 16.349349,22.7940133 Z M11.0325521,62 L21.769401,62 L21.769401,27.3333333 L11.0325521,27.3333333 L11.0325521,62 Z"
+                                          fill="#eee"/>
+                                </g>
+                            </svg>
+                            <h4>LinkedIn</h4>
+                            <a href="https://linkedin.com/in/viniciuscampitelli" target="_blank" rel="noopener" class="h4">Vinícius Campitelli</a>
+                        </div>
+                    </div>
                 </section>
             </div>
         </div>
@@ -497,9 +746,10 @@
 
         <script src="../revealjs/dist/reveal.js"></script>
         <script src="../revealjs/plugin/highlight/highlight.js"></script>
+        <script src="../revealjs/plugin/notes/notes.js"></script>
         <script>
             Reveal.initialize({
-                plugins: [ RevealHighlight ],
+                plugins: [ RevealNotes, RevealHighlight ],
                 slideNumber: true,
                 mouseWheel: true,
                 history: true,
