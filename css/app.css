@@ -46,7 +46,7 @@ p > code[class*="language-"] {
 }
 div.block {
   border: 3px #fff solid;
-  padding: 0.5em;
+  padding: 0.55em 0.5em;
   box-sizing: border-box;
 }
 div.one-third {
@@ -71,6 +71,9 @@ div.one-third {
 }
 .d-flex {
   display: flex;
+}
+.align-start {
+  align-items: start;
 }
 .d-flex.half-columns > div {
   flex-basis: 50%;

@@ -7,12 +7,12 @@
 
         <title>Using libsodium in PHP 7</title>
 
-        <link rel="stylesheet" href="../revealjs/dist/reset.css">
-        <link rel="stylesheet" href="../revealjs/dist/reveal.css">
-        <link rel="stylesheet" href="../revealjs/dist/theme/league.css" id="theme">
-        <link rel="stylesheet" href="../css/night-owl.css">
+        <link rel="stylesheet" href="../revealjs/dist/reset.css?d=20210403">
+        <link rel="stylesheet" href="../revealjs/dist/reveal.css?d=20210403">
+        <link rel="stylesheet" href="../revealjs/dist/theme/league.css?d=20210403" id="theme">
+        <link rel="stylesheet" href="../css/night-owl.css?d=20210403">
 
-        <link rel="stylesheet" href="../css/app.css">
+        <link rel="stylesheet" href="../css/app.css?d=20210403">
     </head>
     <body>
         <div class="reveal">
@@ -84,31 +84,47 @@
                         <blockquote class="fragment">
                             ... about constructing and analyzing protocols that prevent third parties or the public from reading private messages
                         </blockquote>
-                        <a href="https://en.wikipedia.org/wiki/Cryptography" target="_blank" rel="noopener" class="fragment small">
+                        <a href="https://en.wikipedia.org/wiki/Cryptography" target="_blank" rel="noopener" class="fragment small" data-fragment-index="1">
                             Wikipedia
                         </a>
+
+                        <aside class="notes">
+                            Before actually getting into libsodium, I want to make sure that everyone here understands what exactly is cryptography.<br>
+                            According to the greatest source of knowledge today, Wikipedia, cryptography is...
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h2>Cryptography is...</h2>
-                        <div class="d-flex">
+                        <div class="d-flex align-start">
                             <div class="block fragment flex-grow" data-fragment-index="0">
                                 Plaintext
                             </div>
                             <div id="flow-cipher" class="fragment flex-grow" data-fragment-index="1">
-                                &rarr;
+                                <div class="r-stack">
+                                    <span class="fragment fade-out" data-fragment-index="4">&rarr;</span>
+                                    <span class="fragment" data-fragment-index="4">&larr;</span><br>
+                                </div>
+                                <div class="r-stack">
+                                    <small class="smaller fragment fade-in-then-out" data-fragment-index="3">Encryption</small>
+                                    <small class="smaller fragment" data-fragment-index="4">Decryption</small>
+                                </div>
                             </div>
                             <div class="block r-stack fragment flex-grow" data-fragment-index="2">
-                                <span class="fragment fade-in-then-out" data-fragment-index="2">
+                                <code class="fragment plain fade-in-then-out" data-fragment-index="2">
                                     Ciphertext
-                                </span>
-                                <code class="fragment plain">
-                                    UGxhaW50ZXh0Cg==
+                                </code>
+                                <code class="fragment fade-up plain" data-fragment-index="3">
+                                    42a14c854f
                                 </code>
                             </div>
                         </div>
+                        <div class="r-stack">
+                        </div>
 
                         <aside class="notes">
-                            So, cryptography is basically the process that converts a text in something unintelligible
+                            So, cryptography is basically converting a text into something unintelligible. This process
+                            is called encryption.<br> And, of course, the other way around is also cryptography, being
+                            known as decryption.
                         </aside>
                     </section>
                 </section>
@@ -450,11 +466,23 @@
                     <section>
                         <h3>libsodium</h3>
                         <ul>
-                            <li>Modern library available in PHP core since 7.2</li>
+                            <li>Modern library available since PHP 7.2</li>
+                            <li>Fork of <a href="https://nacl.cr.yp.to/" target="_blank" rel="noopener">NaCl</a></li>
                             <li>Official website: <a href="http://libsodium.org/">libsodium.org</a></li>
                             <li>Full documentation: <a href="https://paragonie.com/book/pecl-libsodium">pecl libsodium</a></li>
                             <li>GitHub: <a href="https://github.com/jedisct1/libsodium-php">libsodium-php</a></li>
                         </ul>
+
+                        <aside class="notes">
+                            Now, we are finally ready to talk about libsodium. It is referred to as a modern library because
+                            it ships state-of-the-art algorithms with the most recommended security requirements met. <br>
+                            This way, we don't need to remember all those settings and parameters we need to pass to
+                            OpenSSL or whatever library we are using. <br>
+                            libsodium is a fork of another library called Salt, but is cross-platform and cross-languages,
+                            so we can use it on Windows, Mac and even JavaScript.<br>
+                            The official website is libsodium.org and you can find the full documentation there too, because
+                            the PHP.net manual is very poor, but that's okay.
+                        </aside>
                     </section>
                 </section>
                 <section>
@@ -609,11 +637,6 @@
                             one will send the other their public key. There's a correct way of doing this, the most famous
                             one being called Diffe-Hellman Key Exchange. There's a great Wikipedia article that illustrates
                             how this algorithm works by mixing paints.<br><br>
-
-                            Back to the process itself, when Alice wants to send a message to Bob, she encrypts it using
-                            his public key combined with her private one. Now, when Bob receives that message, first he uses
-                            her public key to check that the message was indeed sent by Alice. Then, he uses his private key
-                            to decrypt that message and read the text itself. Easy, right?
                         </aside>
                     </section>
                     <section data-auto-animate>
@@ -631,6 +654,11 @@
                             $ciphertext = $nonce . $encrypted;
                         </code></pre>
                         <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+
+                        <aside class="notes">
+                            Back to the process itself, when Alice wants to send a message to Bob, she encrypts it using
+                            his public key combined with her private one.
+                        </aside>
                     </section>
                     <section data-auto-animate>
                         <h4>Asymmetric Cryptography</h4>
@@ -646,6 +674,12 @@
                             echo sodium_crypto_box_open($encrypted, $nonce, $key);
                         </code></pre>
                         <a href="../scripts/src/SimpleCrypt.php" class="small">scripts/src/SimpleCrypt.php</a>
+
+                        <aside class="notes">
+                            Now, when Bob receives that message, first he uses her public key to check that the message
+                            was indeed sent by Alice. Then, he uses his private key to decrypt that message and read the
+                            text itself. Easy, right?
+                        </aside>
                     </section>
                 </section>
                 <section>
@@ -672,11 +706,12 @@
                     </section>
                     <section>
                         <h4>Validating passwords</h4>
-                        <pre><code class="php" data-trim data-line-numbers>sodium_crypto_pwhash_str_verify(
-    $storedPassword,
-    $inputPassword
-);
-</code></pre>
+                        <pre><code class="php" data-trim data-line-numbers>
+                            sodium_crypto_pwhash_str_verify(
+                            $storedPassword,
+                            $inputPassword
+                        );
+                        </code></pre>
                         <a href="../scripts/09-pwhash-verify.php" class="small">scripts/09-pwhash-verify.php</a>
                     </section>
                 </section>
@@ -744,9 +779,9 @@
             </div>
         </footer>
 
-        <script src="../revealjs/dist/reveal.js"></script>
-        <script src="../revealjs/plugin/highlight/highlight.js"></script>
-        <script src="../revealjs/plugin/notes/notes.js"></script>
+        <script src="../revealjs/dist/reveal.js?d=20210403"></script>
+        <script src="../revealjs/plugin/highlight/highlight.js?d=20210403"></script>
+        <script src="../revealjs/plugin/notes/notes.js?d=20210403"></script>
         <script>
             Reveal.initialize({
                 plugins: [ RevealNotes, RevealHighlight ],
