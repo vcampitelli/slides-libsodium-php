@@ -1,16 +1,22 @@
 <?php
-// Lê do stdin
+// Reading from STDIN
 $plaintext = trim(fgets(STDIN));
 if (empty($plaintext)) {
-    echo 'Você deve informar o texto a ser criptografado.' . PHP_EOL;
+    echo 'Please provide a valid text to be encrypted.' . PHP_EOL;
     die(1);
 }
 
-// Lê a chave
-$key = trim(file_get_contents('02-encrypt.key'));
+// Reading key
+define('APP_KEY_PATH', '02-encrypt.key');
+if (is_file(APP_KEY_PATH)) {
+    $key = trim(file_get_contents(APP_KEY_PATH));
+} else {
+    $key = sodium_crypto_secretbox_keygen();
+    file_put_contents(APP_KEY_PATH, $key);
+}
 
-// Gera um nonce
+// Generates a nonce
 $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 
-// Prefixa o nonce junto com os dados para poder ser recuperado pelo decrypt
+// We need to prefix the nonce so the decryption process can retrieve it
 echo sodium_bin2hex($nonce . sodium_crypto_secretbox($plaintext, $nonce, $key)) . PHP_EOL;

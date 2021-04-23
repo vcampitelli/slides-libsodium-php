@@ -1,5 +1,5 @@
 <?php
-// Lê do stdin
+// Reading from STDIN
 $port = (empty($argv[1])) ? 0 : (int) $argv[1];
 if ($port < 1) {
     $port = 8000;

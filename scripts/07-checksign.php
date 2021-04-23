@@ -1,6 +1,6 @@
 <?php
 try {
-    // Lê do stdin
+    // Reading from STDIN
     $data = trim(fgets(STDIN));
     if (empty($data)) {
         throw new Exception('Você deve informar os dados a serem validados.');
@@ -15,7 +15,7 @@ try {
         throw new Exception('A assinatura informada não é válida.');
     }
 
-    // Lê a chave pública
+    // Reads public key
     $publicKey = trim(file_get_contents('07-public.key'));
 
     // Verifica a assinatura

@@ -11,7 +11,7 @@ if ((empty($data)) || (empty($data->ad)) || (empty($data->message))) {
     throw new Exception('Os dados informados não são válidos. Utilize o script 12-aead-encrypt.php para gerá-los.');
 }
 
-// Lê a chave
+// Reading key
 $key = file_get_contents('12-aead.key');
 
 $data->message = sodium_hex2bin($data->message);

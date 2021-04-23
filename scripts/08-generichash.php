@@ -1,11 +1,11 @@
 <?php
-// Lê do stdin
+// Reading from STDIN
 $data = trim(fgets(STDIN));
 if (empty($data)) {
     throw new Exception('Você deve informar os dados a serem hasheados.');
 }
 
-// Lê a chave privada
+// Reading key
 $secretKey = trim(file_get_contents('08-generichash.key'));
 
 // Alternativa à md5/sha1

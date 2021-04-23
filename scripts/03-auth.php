@@ -1,13 +1,19 @@
 <?php
-// Lê do stdin
+// Reading from STDIN
 $plaintext = trim(fgets(STDIN));
 if (empty($plaintext)) {
-    echo 'Você deve informar o texto a ser autenticado.' . PHP_EOL;
+    echo 'Please provide a valid text to be authenticated.' . PHP_EOL;
     die(1);
 }
 
-// Lê a chave
-$key = trim(file_get_contents('03-auth.key'));
+// Reading key
+define('APP_KEY_PATH', '03-auth.key');
+if (is_file(APP_KEY_PATH)) {
+    $key = trim(file_get_contents(APP_KEY_PATH));
+} else {
+    $key = sodium_crypto_auth_keygen();
+    file_put_contents(APP_KEY_PATH, $key);
+}
 
 $mac = sodium_crypto_auth($plaintext, $key);
 echo json_encode([

@@ -1,5 +1,5 @@
 <?php
-// Lê do stdin
+// Reading from STDIN
 $ciphertext = trim(fgets(STDIN));
 if (empty($ciphertext)) {
     echo 'Você deve informar o texto a ser descriptografado.' . PHP_EOL;
@@ -7,7 +7,7 @@ if (empty($ciphertext)) {
 }
 $ciphertext = sodium_hex2bin($ciphertext);
 
-// Lê a chave
+// Reading key
 $key = trim(file_get_contents('02-encrypt.key'));
 
 // Separa o nonce do texto

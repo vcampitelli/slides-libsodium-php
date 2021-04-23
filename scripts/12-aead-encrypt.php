@@ -13,7 +13,7 @@ if (empty($ad)) {
     die(1);
 }
 
-// Lê a chave
+// Reading key
 $key = file_get_contents('12-aead.key');
 $nonce = random_bytes(SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NPUBBYTES);
 

@@ -5,7 +5,7 @@ if (empty($storedPassword)) {
     echo 'Você deve primeiro executar o script 09-pwhash.php para gerar uma senha.' . PHP_EOL;
     die(1);
 }
-// Lê do stdin
+// Reading from STDIN
 $userPassword = trim(fgets(STDIN));
 if (empty($userPassword)) {
     echo 'Você deve informar a senha a ser verificada.' . PHP_EOL;

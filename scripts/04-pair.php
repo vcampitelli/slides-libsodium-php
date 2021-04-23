@@ -1,5 +1,5 @@
 <?php
-// Lê do stdin
+// Reading from STDIN
 $message = trim(fgets(STDIN));
 if (empty($message)) {
     echo 'Você deve informar o texto a ser enviado.' . PHP_EOL;

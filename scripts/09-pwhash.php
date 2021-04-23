@@ -1,5 +1,5 @@
 <?php
-// Lê do stdin
+// Reading from STDIN
 $password = trim(fgets(STDIN));
 if (empty($password)) {
     echo 'Você deve informar a senha a ser hasheada.' . PHP_EOL;
